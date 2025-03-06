@@ -6,39 +6,40 @@ import mongoose from "mongoose";
 // Load environment variables
 dotenv.config();
 
-// ✅ Function to Connect to MongoDB
+// ✅ Connect to MongoDB
 const connectDB = async () => {
   try {
     console.log("🔄 Connecting to MongoDB...");
-
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    console.log("✅ MongoDB Connected Successfully!");
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
-    process.exit(1); // Exit process if connection fails
+    process.exit(1);
   }
 };
-
-// ✅ Connect to MongoDB before starting the server
 connectDB();
 
-// ✅ Initialize Express App
 const app = express();
 
 // ✅ Middleware
+app.use(cors({ origin: "http://localhost:5173" })); // Allow Vite frontend
 app.use(express.json());
-app.use(cors());
 
 // ✅ Test API Route
-app.get("/", (req, res) => {
-  res.send("🚀 Farm Management System API is Running...");
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Backend Connected Successfully!" });
 });
 
-// ✅ Start Server after successful DB connection
+// ✅ Welcome API Route
+app.get("/api/welcome", (req, res) => {
+  res.json({
+    message: "Welcome to the Farm Management System! Let's manage your farm effectively.",
+  });
+});
+
+// ✅ Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-

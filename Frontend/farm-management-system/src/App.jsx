@@ -1,23 +1,21 @@
-import { useState, useEffect } from "react";
-import "./App.css";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Startpage from "./pages/Startpage";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import AboutPage from "./pages/AboutPage";
 
-function App() {
-  const [message, setMessage] = useState("Loading...");
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/test") // Backend API URL
-      .then((response) => response.json())
-      .then((data) => setMessage(data.message))
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
-
+const App = () => {
   return (
-    <>
-      <h1>Farm Management System</h1>
-      <p>{message}</p>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Startpage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/about" element={<AboutPage />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
-
