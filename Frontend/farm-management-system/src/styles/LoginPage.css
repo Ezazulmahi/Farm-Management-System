@@ -12,15 +12,16 @@ html, body {
     align-items: center;
     height: 100vh;
     width: 100vw;
-    background: linear-gradient(to right, #2E7D32, #81C784);
+    background-image: url('/images/farm.jpg'); /* Change this to your image path */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 }
 
+
 /* Form container */
 .login-form {
-    background: #F5F5DC; /* Beige */
+    background: #9a98d9; /* Beige */
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
@@ -37,7 +38,7 @@ html, body {
 .login-form h2 {
     font-size: 24px;
     font-weight: bold;
-    color: #1B5E20; /* Deep Green */
+    color: #c3e0c5; /* Deep Green */
     margin-bottom: 20px;
 }
 
@@ -49,7 +50,7 @@ html, body {
     border: 2px solid #A5D6A7; /* Soft Green Border */
     border-radius: 8px;
     font-size: 16px;
-    background: #FAF3E0; /* Light Cream */
+    background: #ddb74e; /* Light Cream */
     color: #2E7D32; /* Dark Green */
     transition: 0.3s ease-in-out;
 }
@@ -61,7 +62,7 @@ html, body {
 
 /* Input focus effect */
 .login-form input:focus {
-    background: #DFFFD6;
+    background: #cbebc2;
     border: 2px solid #388E3C; /* Dark Green Border */
     outline: none;
     color: #1B5E20; /* Deep Green */
@@ -75,7 +76,7 @@ html, body {
     border-radius: 8px;
     font-size: 18px;
     font-weight: bold;
-    color: white;
+    color: rgb(240, 201, 201);
     background: #388E3C; /* Forest Green */
     cursor: pointer;
     transition: 0.3s;
@@ -109,5 +110,5 @@ html, body {
     content: "";
     flex: 1;
     height: 1px;
-    background: #ccc;
+    background: #ae8484;
 }
