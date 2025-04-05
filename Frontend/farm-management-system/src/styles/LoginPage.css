@@ -1,0 +1,113 @@
+/* General page styles */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(to right, #2E7D32, #81C784);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Form container */
+.login-form {
+    background: #F5F5DC; /* Beige */
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 350px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Form Title */
+.login-form h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1B5E20; /* Deep Green */
+    margin-bottom: 20px;
+}
+
+/* Input fields */
+.login-form input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 2px solid #A5D6A7; /* Soft Green Border */
+    border-radius: 8px;
+    font-size: 16px;
+    background: #FAF3E0; /* Light Cream */
+    color: #2E7D32; /* Dark Green */
+    transition: 0.3s ease-in-out;
+}
+
+/* Placeholder Text */
+.login-form input::placeholder {
+    color: #4CAF50; /* Soft Green */
+}
+
+/* Input focus effect */
+.login-form input:focus {
+    background: #DFFFD6;
+    border: 2px solid #388E3C; /* Dark Green Border */
+    outline: none;
+    color: #1B5E20; /* Deep Green */
+}
+
+/* Button styles */
+.login-form button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background: #388E3C; /* Forest Green */
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Button hover effect */
+.login-form button:hover {
+    background: #2E7D32; /* Dark Green */
+}
+
+/* Button when loading */
+.login-form button:disabled {
+    background: #A5D6A7; /* Soft Green */
+    cursor: not-allowed;
+}
+
+/* Links */
+.login-form a {
+    color: #1565C0; /* Rich Blue */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-form a:hover {
+    text-decoration: underline;
+}
+
+/* Divider line */
+.divider:after,
+.divider:before {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #ccc;
+}

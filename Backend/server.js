@@ -2,11 +2,11 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
+import userRoutes from "./Routes/userRoutes.js";
 
-// Load environment variables
 dotenv.config();
 
-// ✅ Connect to MongoDB
+
 const connectDB = async () => {
   try {
     console.log("🔄 Connecting to MongoDB...");
@@ -27,6 +27,9 @@ const app = express();
 // ✅ Middleware
 app.use(cors({ origin: "http://localhost:5173" })); // Allow Vite frontend
 app.use(express.json());
+
+// ✅ Routes
+app.use("/api/users", userRoutes); // Add user routes
 
 // ✅ Test API Route
 app.get("/api/test", (req, res) => {

@@ -1,0 +1,114 @@
+/* General page styles */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevents scrolling */
+}
+
+.signup-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ensures it covers the full viewport */
+    width: 100vw;
+    background: linear-gradient(to right, #ff7eb3, #ff758c, #ff7eb3);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Apply background image */
+.signup-page::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/images/bg.jpg') no-repeat center center/cover;
+    z-index: -1; /* Places it behind other content */
+}
+
+/* Form container */
+.signup-form {
+    background: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 350px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Heading */
+.signup-form h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff4f81;
+    margin-bottom: 20px;
+}
+
+/* Input fields */
+.signup-form input,
+.signup-form select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #f4f4f4;
+    transition: 0.3s ease-in-out;
+}
+
+/* Input focus effect */
+.signup-form input:focus,
+.signup-form select:focus {
+    background: #835454;
+    border: 2px solid #ff4f81;
+    outline: none;
+}
+
+/* Button styles */
+.signup-form button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    color: rgb(144, 66, 66);
+    background: #ff4f81;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Button hover effect */
+.signup-form button:hover {
+    background: #ff3265;
+}
+
+/* Button when loading */
+.signup-form button:disabled {
+    background: #4e2b2b;
+    cursor: not-allowed;
+}
+
+/* Center the text inside the select dropdown */
+.signup-form select {
+    text-align: center;
+    text-align-last: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Ensure alignment in older browsers */
+.signup-form select option {
+    text-align: center;
+}
