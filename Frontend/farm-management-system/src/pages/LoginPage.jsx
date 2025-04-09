@@ -10,7 +10,7 @@ import {
   MDBInput,
   MDBCheckbox
 } from 'mdb-react-ui-kit';
-import "../styles/LoginPage.css"; // Import CSS styles
+import "../styles/LoginPage.css"; 
 
 const LoginPage = () => {
   const [userData, setUserData] = useState({ email: '', password: '' });
@@ -28,9 +28,18 @@ const LoginPage = () => {
 
     try {
       const { data } = await axios.post('http://localhost:5000/api/users/login', userData);
-      localStorage.setItem("userInfo", JSON.stringify(data.user)); // Store user info
+
+      // Store user data in localStorage
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
+
       alert("Login successful!");
-      navigate('/home'); // Redirect to home page
+
+      // Redirect based on user role
+      if (data.user.type === "admin") {
+        navigate('/admin');
+      } else {
+        navigate('/home');
+      }
     } catch (error) {
       alert(error.response?.data?.message || "Login failed.");
     } finally {
@@ -41,7 +50,6 @@ const LoginPage = () => {
   return (
     <MDBContainer fluid className="p-3 my-5 login-page">
       <MDBRow>
-
         <MDBCol col='10' md='6'>
           <img src="/images/" className="img-fluid" alt="Farm Login" />
         </MDBCol>
@@ -49,15 +57,38 @@ const LoginPage = () => {
         <MDBCol col='4' md='6'>
           <form onSubmit={handleSubmit} className="login-form">
             <h2>Farm Management Login</h2>
-            <MDBInput wrapperClass='mb-4' label='Email Address' type='email' name="email" value={userData.email} onChange={handleChange} required />
-            <MDBInput wrapperClass='mb-4' label='Password' type='password' name="password" value={userData.password} onChange={handleChange} required />
+
+            <MDBInput
+              wrapperClass='mb-4'
+              label='Email Address'
+              type='email'
+              name="email"
+              value={userData.email}
+              onChange={handleChange}
+              required
+            />
+
+            <MDBInput
+              wrapperClass='mb-4'
+              label='Password'
+              type='password'
+              name="password"
+              value={userData.password}
+              onChange={handleChange}
+              required
+            />
 
             <div className="d-flex justify-content-between mx-4 mb-4">
-              <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Remember me' />
-              <a href="!#">Forgot password?</a>
+              <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='Remember me' />
+              <a href="#!">Forgot password?</a>
             </div>
 
-            <MDBBtn type="submit" className="mb-4 w-100" size="lg" disabled={loading}>
+            <MDBBtn
+              type="submit"
+              className="mb-4 w-100"
+              size="lg"
+              disabled={loading}
+            >
               {loading ? "Signing in..." : "Sign in"}
             </MDBBtn>
 
@@ -76,7 +107,6 @@ const LoginPage = () => {
             </MDBBtn>
           </form>
         </MDBCol>
-
       </MDBRow>
     </MDBContainer>
   );
