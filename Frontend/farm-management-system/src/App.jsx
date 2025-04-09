@@ -4,7 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import AboutPage from "./pages/AboutPage";
 import HomePage from "./pages/HomePage";
-
+import WeatherUpdate from "./pages/WeatherUpdate";
 
 const App = () => {
   return (
@@ -15,7 +15,7 @@ const App = () => {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/home" element={<HomePage />} />
-
+        <Route path="/weather" element={<WeatherUpdate />} />
       </Routes>
     </Router>
   );
