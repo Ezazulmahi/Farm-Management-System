@@ -1,12 +1,14 @@
-// backend/routes/productRoutes.js
-const express = require("express");
+       
+
+import express from "express";
+import { getAllProducts, createProduct, updateProduct, deleteProduct } from "../controllers/productController.js";
+
 const router = express.Router();
-const productController = require("../controllers/productController");
 
-router.get("/", productController.getAllProducts);
-router.post("/", productController.createProduct);
-router.delete("/:id", productController.deleteProduct);
-router.put("/:id", productController.updateProduct);
+router.get("/", getAllProducts); // GET /api/products
+router.post("/", createProduct); // POST /api/products
+router.delete("/:id", deleteProduct); // DELETE /api/products/:id
+router.put("/:id", updateProduct); // PUT /api/products/:id
 
-module.exports = router;
+export default router;
 
