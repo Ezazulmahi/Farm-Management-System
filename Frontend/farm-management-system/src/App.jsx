@@ -8,7 +8,9 @@ import FarmProfile from "./pages/FarmProfile";
 import Cart from "./pages/Cart";
 import Notification from "./pages/Notification";
 import Payment from "./pages/Payment";
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LocationTracking from "./pages/LocationTracking";
+import dashboard from "./pages/AdminDashboard"
 
 
 
@@ -16,7 +18,10 @@ const App = () => {
   return (
     <Router>
       <Routes>
+      <Route path="/dashboard" element={<dashboard/>} />
+
         <Route path="/" element={<Startpage />} />
+        <Route path="/track" element={<LocationTracking />} />
         <Route path="/profile" element={<FarmProfile />} />
         <Route path="/login" element={<LoginPage/>} />
         <Route path="/signup" element={<SignUpPage />} />

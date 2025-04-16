@@ -1,6 +1,7 @@
 // components/DashboardCard.jsx
 import React from 'react';
-import { cn } from "@/lib/utils"; // If you're using shadcn/ui's utility functions
+ import { cn } from "../lib/utils"; 
+
 
 const DashboardCard = ({ title, value, icon: Icon, className }) => {
   return (
