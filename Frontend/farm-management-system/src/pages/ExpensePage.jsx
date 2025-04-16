@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { getExpenses, createExpense, deleteExpense, updateExpense } from "../api/expenseAPI";
-import { parse } from "json2csv";
+import {
+  getExpenses,
+  createExpense,
+  deleteExpense,
+  updateExpense,
+} from "../api/expenseAPI";
 
 const ExpensePage = () => {
   const [expenses, setExpenses] = useState([]);
@@ -24,7 +28,7 @@ const ExpensePage = () => {
 
   const loadExpenses = async () => {
     try {
-      const data = await getExpenses(filter); // Make sure backend supports filter params
+      const data = await getExpenses(filter); // assumes API supports filter
       setExpenses(data);
     } catch (error) {
       console.error("Error loading expenses:", error);
@@ -72,22 +76,34 @@ const ExpensePage = () => {
     }
   };
 
-  const handleExportCSV = () => {
-    try {
-      const csv = parse(expenses);
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "expenses.csv";
-      link.click();
-    } catch (err) {
-      console.error("CSV Export Error:", err);
-    }
-  };
-
   const clearFilters = () => {
     setFilter({ category: "", startDate: "", endDate: "" });
     loadExpenses();
+  };
+
+  // 👉 Manual CSV Conversion
+  const convertToCSV = (data) => {
+    if (data.length === 0) return "";
+
+    const header = Object.keys(data[0]).join(",");
+    const rows = data.map((row) =>
+      Object.values(row)
+        .map((val) => `"${String(val).replace(/"/g, '""')}"`)
+        .join(",")
+    );
+
+    return [header, ...rows].join("\n");
+  };
+
+  const handleExportCSV = () => {
+    if (expenses.length === 0) return;
+
+    const csv = convertToCSV(expenses);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "expenses.csv";
+    link.click();
   };
 
   return (
