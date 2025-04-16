@@ -11,8 +11,8 @@ import Payment from "./pages/Payment";
 import LocationTracking from "./pages/LocationTracking";
 import Dashboard from "./pages/AdminDashboard";
 import InventoryPage from "./pages/InventoryPage";
-import TaskPage from "./pages/TaskPage"; // Assuming you have this component
-import ExpensePage from "./pages/ExpensePage"; // Assuming you have this component
+
+
 
 const App = () => {
   return (
@@ -29,6 +29,7 @@ const App = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/notifications" element={<Notification />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/Dashboard" element={<Dashboard/>} />
         <Route path="/inventory" element={<InventoryPage />} />
         <Route path="/admin/tasks" element={<TaskPage />} />
         <Route path="/admin/expenses" element={<ExpensePage />} />
