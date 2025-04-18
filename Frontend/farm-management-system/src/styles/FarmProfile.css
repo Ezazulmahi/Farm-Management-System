@@ -1,18 +1,17 @@
-/* Profile Page Styles */
+/* Farm Profile Page */
 .farm-profile-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
-  background-image: url("/images/cart_page.jpg"); /* Background image */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #10140a, #a8e063);
+  font-family: 'Poppins', sans-serif;
   overflow-y: auto;
-  padding-top: 120px; /* Space for fixed navbar */
+  overflow-x: hidden;
+  padding-top: 120px; /* Adjusted top padding */
+  padding-bottom: 40px;
+  box-sizing: border-box;
 }
 
 /* Navbar */
@@ -20,73 +19,97 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 10px 15px; /* Reduced padding even further */
-  border-radius: 10px;
+  background-color: #2e7d32;
+  padding: 10px 20px; /* Reduced padding for closeness */
+  border-radius: 15px;
   position: fixed;
   top: 10px;
   left: 2%;
   width: 96%;
   z-index: 1000;
-  margin: 0; /* No extra margin */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
-/* Navbar Title */
 .nav-bar h2 {
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 1.7rem; /* Smaller font size */
+  font-weight: 700;
   color: white;
   margin: 0;
-  padding-left: 10px; /* Tight space to the left */
 }
 
-/* Icons Section */
 .nav-icons {
   display: flex;
-  gap: 5px; /* Significantly reduced gap to make icons closer */
+  gap: 15px; /* Increased gap for better visual spacing */
 }
 
-/* Navbar Icons */
 .nav-icon {
-  width: 30px; /* Reduced icon size for tighter fit */
-  height: 30px;
+  width: 35px;
+  height: 35px;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 }
 
 .nav-icon:hover {
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 
 /* Profile Card */
 .profile-card {
-  background: rgba(255, 0, 0, 0.8); /* Red background with opacity */
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: #1d0f0f;
+  padding: 30px 20px; /* Reduced padding for better fit */
+  border-radius: 16px;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
   text-align: center;
   width: 90%;
-  max-width: 400px;
-  margin-top: 50px;
-  color: white;
+  max-width: 420px;
+  margin-top: 60px; /* Increased space between navbar and card */
+  color: #412e2e;
+  transition: all 0.3s ease-in-out;
 }
 
-/* Profile Avatar */
+.profile-card:hover {
+  transform: translateY(-7px); /* Increased hover effect */
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25); /* Darker hover shadow */
+}
+
 .profile-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%; /* Circular avatar */
+  width: 120px; /* Increased avatar size */
+  height: 120px;
+  border-radius: 50%;
   object-fit: cover;
+  border: 4px solid #1a211b;
   margin-bottom: 20px;
 }
 
 .profile-name {
-  font-size: 1.8rem;
+  font-size: 2rem; /* Larger name font */
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 15px; /* Adjusted margin */
+  color: #2e7d32;
 }
 
 .profile-detail {
-  font-size: 1rem;
-  margin: 5px 0;
+  font-size: 1.1rem; /* Slightly larger font size */
+  color: #e0e0e0; /* Lightened color for better readability */
+  margin: 6px 0;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nav-bar {
+    padding: 8px 15px;
+    font-size: 1.5rem;
+  }
+  
+  .profile-card {
+    width: 85%;
+    padding: 25px 15px;
+  }
+
+  .profile-name {
+    font-size: 1.6rem;
+  }
+
+  .profile-detail {
+    font-size: 1rem;
+  }

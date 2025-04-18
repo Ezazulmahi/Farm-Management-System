@@ -1,4 +1,4 @@
-// components/DashboardChart.jsx
+
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
