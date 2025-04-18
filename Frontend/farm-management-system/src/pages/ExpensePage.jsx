@@ -5,7 +5,7 @@ import {
   deleteExpense,
   updateExpense,
 } from "../api/expenseAPI";
-
+import "../styles/ExpensePage.css"; // Make sure this path matches your project structure
 
 const ExpensePage = () => {
   const [expenses, setExpenses] = useState([]);
@@ -29,7 +29,7 @@ const ExpensePage = () => {
 
   const loadExpenses = async () => {
     try {
-      const data = await getExpenses(filter); // assumes API supports filter
+      const data = await getExpenses(filter);
       setExpenses(data);
     } catch (error) {
       console.error("Error loading expenses:", error);
@@ -82,23 +82,19 @@ const ExpensePage = () => {
     loadExpenses();
   };
 
-  // 👉 Manual CSV Conversion
   const convertToCSV = (data) => {
     if (data.length === 0) return "";
-
     const header = Object.keys(data[0]).join(",");
     const rows = data.map((row) =>
       Object.values(row)
         .map((val) => `"${String(val).replace(/"/g, '""')}"`)
         .join(",")
     );
-
     return [header, ...rows].join("\n");
   };
 
   const handleExportCSV = () => {
     if (expenses.length === 0) return;
-
     const csv = convertToCSV(expenses);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
@@ -108,16 +104,15 @@ const ExpensePage = () => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Expense Tracker</h2>
+    <div className="expense-page">
+      <h2>Expense Tracker</h2>
 
       {/* Filter Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+      <div className="filter-controls">
         <select
           name="category"
           value={filter.category}
           onChange={(e) => setFilter({ ...filter, category: e.target.value })}
-          className="p-2 border rounded"
         >
           <option value="">All Categories</option>
           <option value="Seeds">Seeds</option>
@@ -133,7 +128,6 @@ const ExpensePage = () => {
           name="startDate"
           value={filter.startDate}
           onChange={(e) => setFilter({ ...filter, startDate: e.target.value })}
-          className="p-2 border rounded"
         />
 
         <input
@@ -141,44 +135,28 @@ const ExpensePage = () => {
           name="endDate"
           value={filter.endDate}
           onChange={(e) => setFilter({ ...filter, endDate: e.target.value })}
-          className="p-2 border rounded"
         />
 
-        <button
-          onClick={loadExpenses}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
+        <button onClick={loadExpenses} className="apply-btn">
           Apply Filters
         </button>
 
-        <button
-          onClick={clearFilters}
-          className="bg-red-400 text-white px-4 py-2 rounded"
-        >
+        <button onClick={clearFilters} className="clear-btn">
           Clear Filters
         </button>
       </div>
 
       {/* Export Button */}
-      <div className="mb-4">
-        <button
-          onClick={handleExportCSV}
-          className="bg-gray-700 text-white px-4 py-2 rounded"
-        >
-          Export to CSV
-        </button>
-      </div>
+      <button onClick={handleExportCSV} className="export-btn">
+        Export to CSV
+      </button>
 
       {/* Form to Add/Edit Expense */}
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white shadow-md rounded-2xl p-4 mb-6"
-      >
+      <form onSubmit={handleSubmit} className="expense-form">
         <select
           name="category"
           value={form.category}
           onChange={handleChange}
-          className="p-2 border rounded"
           required
         >
           <option value="">Select Category</option>
@@ -196,7 +174,6 @@ const ExpensePage = () => {
           placeholder="Amount"
           value={form.amount}
           onChange={handleChange}
-          className="p-2 border rounded"
           required
         />
 
@@ -205,7 +182,6 @@ const ExpensePage = () => {
           name="date"
           value={form.date}
           onChange={handleChange}
-          className="p-2 border rounded"
           required
         />
 
@@ -214,45 +190,38 @@ const ExpensePage = () => {
           placeholder="Notes"
           value={form.notes}
           onChange={handleChange}
-          className="p-2 border rounded col-span-1 md:col-span-2"
         ></textarea>
 
-        <button
-          type="submit"
-          className="bg-green-600 text-white py-2 rounded col-span-1 md:col-span-2"
-        >
+        <button type="submit">
           {isEditing ? "Update Expense" : "Add Expense"}
         </button>
       </form>
 
       {/* Expense List */}
-      <div className="grid gap-4">
+      <div className="expense-list">
         {expenses.length === 0 ? (
-          <p className="text-gray-500">No expenses recorded.</p>
+          <p className="empty-state">No expenses recorded.</p>
         ) : (
           expenses.map((expense) => (
-            <div
-              key={expense._id}
-              className="bg-white shadow rounded-lg p-4 flex justify-between items-center"
-            >
+            <div key={expense._id} className="expense-card">
               <div>
-                <h4 className="font-semibold text-lg">{expense.category}</h4>
-                <p className="text-sm text-gray-600">₹{expense.amount}</p>
-                <p className="text-sm text-gray-500">{expense.notes}</p>
-                <p className="text-sm text-gray-400">
+                <h4>{expense.category}</h4>
+                <p>₹{expense.amount}</p>
+                <p>{expense.notes}</p>
+                <p className="date">
                   {new Date(expense.date).toLocaleDateString()}
                 </p>
               </div>
-              <div className="flex space-x-2">
+              <div className="actions">
                 <button
                   onClick={() => handleEdit(expense)}
-                  className="bg-yellow-500 text-white px-4 py-1 rounded"
+                  className="edit-btn"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(expense._id)}
-                  className="bg-red-500 text-white px-4 py-1 rounded"
+                  className="delete-btn"
                 >
                   Delete
                 </button>

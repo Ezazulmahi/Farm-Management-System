@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Remove duplicate import
 import Startpage from "./pages/Startpage";
 import LoginPage from "./pages/LoginPage";
@@ -11,6 +12,9 @@ import Payment from "./pages/Payment";
 import LocationTracking from "./pages/LocationTracking";
 import Dashboard from "./pages/AdminDashboard";
 import InventoryPage from "./pages/InventoryPage";
+import TaskPage from "./pages/TaskPage";
+import ExpensePage from "./pages/ExpensePage";
+
 
 
 

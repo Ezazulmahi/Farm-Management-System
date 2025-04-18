@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from "react";
 import "../styles/StartPage.css"; // Assuming your CSS file is in the styles folder
 
