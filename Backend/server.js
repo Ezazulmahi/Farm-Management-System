@@ -5,6 +5,8 @@ import mongoose from "mongoose";
 import userRoutes from "./Routes/userRoutes.js";
 import profileRoutes from "./Routes/ProfileRoutes.js";
 import locationRoutes from "./Routes/locationRoutes.js";
+import weatherRoutes from "./Routes/weatherRoutes.js";
+
 
 dotenv.config();
 
@@ -40,6 +42,7 @@ app.use("/api/location", locationRoutes);
 app.get("/api/test", (req, res) => {
   res.json({ message: "Backend Connected Successfully!" });
 });
+app.use("/api/weather", weatherRoutes); 
 
 app.get("/api/welcome", (req, res) => {
   res.json({

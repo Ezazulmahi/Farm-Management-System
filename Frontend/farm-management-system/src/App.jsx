@@ -15,6 +15,7 @@ import LocationTracking from "./pages/LocationTracking";
 import Dashboard from "./pages/AdminDashboard";
 import InventoryPage from "./pages/InventoryPage";
 import Post from "./pages/Adminpost";
+import Weather from "./pages/WeatherPage";
 
 
 
@@ -23,6 +24,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/post" element={<Post/>} />
+        <Route path="/weather" element={<Weather/>} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/" element={<Startpage />} />
         <Route path="/track" element={<LocationTracking />} />
