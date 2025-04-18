@@ -7,6 +7,8 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import AboutPage from "./pages/AboutPage";
 import HomePage from "./pages/HomePage";
+import WeatherUpdate from "./pages/WeatherUpdate";
+
 import FarmProfile from "./pages/FarmProfile";
 import Cart from "./pages/Cart";
 import Notification from "./pages/Notification";
@@ -33,13 +35,12 @@ const App = () => {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/home" element={<HomePage />} />
+        <Route path="/weather" element={<WeatherUpdate />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/notifications" element={<Notification />} />
         <Route path="/payment" element={<Payment />} />
-        <Route path="/Dashboard" element={<Dashboard/>} />
-        <Route path="/inventory" element={<InventoryPage />} />
-        <Route path="/admin/tasks" element={<TaskPage />} />
-        <Route path="/admin/expenses" element={<ExpensePage />} />
+
+
       </Routes>
     </Router>
   );
