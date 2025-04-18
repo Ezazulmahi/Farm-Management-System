@@ -1,9 +1,9 @@
 // controllers/expenseController.js
-const Expense = require("../models/Expense");
+import Expense from "../models/Expense.js";  // Default import
 
 // @desc    Get all expenses
 // @route   GET /api/expenses
-exports.getExpenses = async (req, res) => {
+export const getExpenses = async (req, res) => {
   try {
     const expenses = await Expense.find().sort({ date: -1 });
     res.status(200).json(expenses);
@@ -14,7 +14,7 @@ exports.getExpenses = async (req, res) => {
 
 // @desc    Create a new expense
 // @route   POST /api/expenses
-exports.createExpense = async (req, res) => {
+export const createExpense = async (req, res) => {
   try {
     const { category, amount, notes, date } = req.body;
     const newExpense = new Expense({ category, amount, notes, date });
@@ -27,7 +27,7 @@ exports.createExpense = async (req, res) => {
 
 // @desc    Delete an expense
 // @route   DELETE /api/expenses/:id
-exports.deleteExpense = async (req, res) => {
+export const deleteExpense = async (req, res) => {
   try {
     await Expense.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Expense deleted" });
