@@ -7,9 +7,8 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import AboutPage from "./pages/AboutPage";
 import HomePage from "./pages/HomePage";
-<<<<<<< HEAD
 import WeatherUpdate from "./pages/WeatherUpdate";
-=======
+
 import FarmProfile from "./pages/FarmProfile";
 import Cart from "./pages/Cart";
 import Notification from "./pages/Notification";
@@ -20,7 +19,6 @@ import InventoryPage from "./pages/InventoryPage";
 import Post from "./pages/Adminpost";
 
 
->>>>>>> 6e0056b3696101fdd2e17d3a85dad2a5e4f57218
 
 const App = () => {
   return (
@@ -35,9 +33,7 @@ const App = () => {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/home" element={<HomePage />} />
-<<<<<<< HEAD
         <Route path="/weather" element={<WeatherUpdate />} />
-=======
         <Route path="/cart" element={<Cart />} />
         <Route path="/notifications" element={<Notification />} />
         <Route path="/payment" element={<Payment />} />

@@ -16,5 +16,11 @@
     "url": "https://github.com/Ezazulmahi/Farm-Management-System/issues"
   },
   "homepage": "https://github.com/Ezazulmahi/Farm-Management-System#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.494.0",
+    "react-leaflet": "^5.0.0",
+    "recharts": "^2.15.3"
+  }
 }
