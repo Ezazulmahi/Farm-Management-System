@@ -1,110 +1,122 @@
-/* Apply to full page */
-body, html, #root {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to right bottom, #e0f7fa, #b2ebf2);
-    overflow: auto;
-  }
-  
-  /* Container to hold all weather content */
-  .weather-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 50px 20px;
-    box-sizing: border-box;
-    background: linear-gradient(to bottom right, #ffffffcc, #e0f7facf);
-    overflow-y: auto;
-  }
-  
-  /* Title styling */
-  .weather-title {
-    font-size: 36px;
-    margin-bottom: 30px;
-    font-weight: bold;
-    color: #006064;
-    text-shadow: 1px 1px 2px #ccc;
-  }
-  
-  /* Input & button section */
-  .weather-form {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 30px;
-  }
-  
-  .weather-input {
-    padding: 12px;
-    font-size: 16px;
-    border: 2px solid #00838f;
-    border-radius: 8px;
-    width: 250px;
-    outline: none;
-    transition: border-color 0.3s ease;
-  }
-  
-  .weather-input:focus {
-    border-color: #004d40;
-  }
-  
-  .weather-button {
-    background-color: #00acc1;
-    color: white;
-    padding: 12px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .weather-button:hover {
-    background-color: #007c91;
-  }
-  
-  /* Weather result box */
-  .weather-result {
-    margin-top: 30px;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 25px;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    text-align: center;
-  }
-  
-  .weather-result h3 {
-    font-size: 28px;
-    color: #004d40;
-    margin-bottom: 10px;
-  }
-  
-  .weather-result p {
-    font-size: 18px;
-    color: #333;
-    margin: 8px 0;
-  }
-  
-  /* Responsive spacing */
-  @media (max-width: 500px) {
-    .weather-input {
-      width: 100%;
-    }
-  
-    .weather-button {
-      width: 100%;
-    }
-  
-    .weather-form {
-      flex-direction: column;
-      align-items: center;
-    }
-  }
-  
+.App {
+  text-align: center;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #e0f7fa, #f0f4c3);
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+.input-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+input {
+  padding: 0.6rem 1rem;
+  width: 260px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 5px #00bcd4;
+  border-color: #00bcd4;
+}
+
+button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  background-color: #00bcd4;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0097a7;
+}
+
+.suggestions {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem auto;
+  max-width: 300px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.suggestions li {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease;
+}
+
+.suggestions li:last-child {
+  border-bottom: none;
+}
+
+.suggestions li:hover {
+  background-color: #f1f1f1;
+}
+
+.weather-info {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #ffffffdd;
+  display: inline-block;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.weather-info h2 {
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.forecast {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.forecast-day {
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  width: 140px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+}
+
+.forecast-day:hover {
+  transform: translateY(-4px);
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  margin-top: 1rem;
+}
