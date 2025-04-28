@@ -1,6 +1,6 @@
 // backend/controllers/productController.js
 
-import Product from "../models/Product.js";
+import Product from "../Model/models/Product.js";
 
 // Get all products
 export const getAllProducts = async (req, res) => {

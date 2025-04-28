@@ -1,5 +1,5 @@
 // controllers/expenseController.js
-const Expense = require("../models/Expense");
+const Expense = require("../Model/models/Expense");
 
 // @desc    Get all expenses
 // @route   GET /api/expenses
