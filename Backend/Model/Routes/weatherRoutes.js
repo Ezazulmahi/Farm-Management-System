@@ -4,17 +4,43 @@ import axios from 'axios';
 
 const router = express.Router();
 
-router.get('/:city', async (req, res) => {
-  const city = req.params.city;
-  const apiKey = 'a2115fc8971a474a87f153620251804'; 
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+const BASE_URL = 'http://api.weatherapi.com/v1';
+const API_KEY = process.env.WEATHER_API_KEY;
+
+// 🌦️ Get current + forecast weather
+router.get('/', async (req, res) => {
+  const city = req.query.city || 'London';
+  try {
+    const response = await axios.get(`${BASE_URL}/forecast.json`, {
+      params: {
+        key: API_KEY,
+        q: city,
+        days: 3,
+        aqi: 'no',
+        alerts: 'no',
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch weather data' });
+  }
+});
+
+// 🔍 Autocomplete city search
+router.get('/search', async (req, res) => {
+  const query = req.query.q;
+  if (!query) return res.status(400).json({ error: 'Missing query' });
 
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(`${BASE_URL}/search.json`, {
+      params: {
+        key: API_KEY,
+        q: query,
+      },
+    });
     res.json(response.data);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: 'Failed to fetch weather data' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to search locations' });
   }
 });
 

@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import AboutPage from "./pages/AboutPage";
 import HomePage from "./pages/HomePage";
+import WeatherUpdate from "./pages/WeatherUpdate";
 
 import FarmProfile from "./pages/FarmProfile";
 import Cart from "./pages/Cart";
