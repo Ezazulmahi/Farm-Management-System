@@ -1,5 +1,5 @@
 // controllers/expenseController.js
-import Expense from "../models/Expense.js";  // Default import
+const Expense = require("../models/Expense");
 
 // @desc    Get all expenses
 // @route   GET /api/expenses

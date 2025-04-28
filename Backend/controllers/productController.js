@@ -1,4 +1,5 @@
 // backend/controllers/productController.js
+
 import Product from "../models/Product.js";
 
 // Get all products

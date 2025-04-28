@@ -1,5 +1,4 @@
-// backend/controllers/TaskController.js
-import Task from "../models/Task.js";  // Make sure Task model is imported using ES Module syntax
+const Task = require("../models/Task");
 
 // Get all tasks
 export const getAllTasks = async (req, res) => {

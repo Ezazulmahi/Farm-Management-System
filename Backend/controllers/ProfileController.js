@@ -1,6 +1,6 @@
 // Backend/controllers/profileController.js
 
-import User from "../models/User.js";
+import User from "../Model/models/User.js";
 
 // Controller to get user profile
 export const getUserProfile = async (req, res) => {
