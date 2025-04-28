@@ -1,183 +1,223 @@
-/* src/pages/ExpensePage.css */
+/* General Layout */
+.admin-dashboard-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-/* General Page Styling */
 .expense-page {
-    padding: 1.5rem;
-    background-color: #f9fafb;
-  }
-  
-  /* Title */
-  .expense-page h2 {
-    font-size: 1.875rem;
-    font-weight: bold;
-    color: #1f2937;
-    margin-bottom: 1rem;
-  }
-  
-  /* Filter Section */
-  .filter-controls {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .filter-controls select,
-  .filter-controls input,
-  .filter-controls button {
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    font-size: 0.9rem;
-  }
-  
-  .filter-controls button {
-    font-weight: 600;
-    transition: background-color 0.2s ease;
-  }
-  
-  .filter-controls .apply-btn {
-    background-color: #3b82f6;
-    color: white;
-  }
-  
-  .filter-controls .clear-btn {
-    background-color: #f87171;
-    color: white;
-  }
-  
-  /* CSV Export */
-  .export-btn {
-    margin-bottom: 1.25rem;
-    background-color: #374151;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-  }
-  
-  .export-btn:hover {
-    background-color: #1f2937;
-  }
-  
-  /* Form Styling */
-  .expense-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    background-color: white;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    margin-bottom: 2rem;
-  }
-  
-  .expense-form select,
-  .expense-form input,
-  .expense-form textarea {
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    font-size: 0.9rem;
-  }
-  
-  .expense-form textarea {
-    resize: vertical;
-    min-height: 60px;
-  }
-  
-  .expense-form button {
-    grid-column: span 2;
-    background-color: #059669;
-    color: white;
-    font-weight: 600;
-    padding: 0.6rem;
-    border-radius: 8px;
-    transition: background-color 0.2s ease;
-  }
-  
-  .expense-form button:hover {
-    background-color: #047857;
-  }
-  
-  /* Expense List */
-  .expense-list {
-    display: grid;
-    gap: 1rem;
-  }
-  
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.page-title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+}
+
+/* Filter Controls */
+.filter-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-section select,
+.filter-section input[type="date"] {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+}
+
+.apply-btn,
+.clear-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.clear-btn {
+  background-color: #9ca3af;
+}
+
+.apply-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.clear-btn:hover {
+  background-color: #6b7280;
+}
+
+/* Export Button */
+.export-section {
+  text-align: right;
+  margin-bottom: 1.5rem;
+}
+
+.export-btn {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.export-btn:hover {
+  background-color: #059669;
+}
+
+/* Form */
+.expense-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background-color: #f3f4f6;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.expense-form select,
+.expense-form input,
+.expense-form textarea {
+  flex: 1 1 200px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+}
+
+.expense-form textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.expense-form button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.expense-form button:hover {
+  background-color: #2563eb;
+}
+
+/* Expense List */
+.expense-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.expense-card {
+  background-color: #f9fafb;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.expense-info {
+  max-width: 70%;
+}
+
+.expense-info h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+  color: #111827;
+}
+
+.expense-info p {
+  margin: 0.2rem 0;
+  color: #374151;
+}
+
+.expense-info .date {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* Action Buttons */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-btn {
+  background-color: #f59e0b;
+  color: #fff;
+}
+
+.delete-btn {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.edit-btn:hover {
+  background-color: #d97706;
+}
+
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
   .expense-card {
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
   }
-  
-  .expense-card h4 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    color: #1f2937;
+
+  .expense-info {
+    max-width: 100%;
   }
-  
-  .expense-card p {
-    font-size: 0.875rem;
-    color: #4b5563;
+
+  .actions {
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 1rem;
   }
-  
-  .expense-card .date {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    margin-top: 0.25rem;
-  }
-  
-  /* Action Buttons */
-  .expense-card .actions {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .expense-card .actions button {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    border-radius: 6px;
-    color: white;
-    transition: opacity 0.2s ease;
-  }
-  
-  .expense-card .actions .edit-btn {
-    background-color: #f59e0b;
-  }
-  
-  .expense-card .actions .delete-btn {
-    background-color: #ef4444;
-  }
-  
-  .expense-card .actions button:hover {
-    opacity: 0.9;
-  }
-  
-  /* Empty State */
-  .empty-state {
-    color: #9ca3af;
-    font-size: 0.95rem;
-    text-align: center;
-    padding: 1rem;
-  }
-  
-  /* Responsive Tweaks */
-  @media (max-width: 768px) {
-    .expense-form {
-      grid-template-columns: 1fr;
-    }
-  
-    .expense-form button {
-      grid-column: span 1;
-    }
-  }
-  
+}

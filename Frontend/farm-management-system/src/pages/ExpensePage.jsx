@@ -5,7 +5,8 @@ import {
   deleteExpense,
   updateExpense,
 } from "../api/expenseAPI";
-import "../styles/ExpensePage.css"; // Make sure this path matches your project structure
+import AdminNavbar from "../components/AdminNavbar";
+import "../styles/ExpensePage.css";
 
 const ExpensePage = () => {
   const [expenses, setExpenses] = useState([]);
@@ -37,7 +38,13 @@ const ExpensePage = () => {
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilter((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -48,9 +55,7 @@ const ExpensePage = () => {
       } else {
         await createExpense(form);
       }
-      setForm({ category: "", amount: "", notes: "", date: "" });
-      setIsEditing(false);
-      setEditId(null);
+      resetForm();
       loadExpenses();
     } catch (error) {
       console.error("Error saving expense:", error);
@@ -75,6 +80,12 @@ const ExpensePage = () => {
     } catch (error) {
       console.error("Error deleting expense:", error);
     }
+  };
+
+  const resetForm = () => {
+    setForm({ category: "", amount: "", notes: "", date: "" });
+    setIsEditing(false);
+    setEditId(null);
   };
 
   const clearFilters = () => {
@@ -104,131 +115,130 @@ const ExpensePage = () => {
   };
 
   return (
-    <div className="expense-page">
-      <h2>Expense Tracker</h2>
+    <div className="admin-dashboard-container">
+      <AdminNavbar />
 
-      {/* Filter Controls */}
-      <div className="filter-controls">
-        <select
-          name="category"
-          value={filter.category}
-          onChange={(e) => setFilter({ ...filter, category: e.target.value })}
-        >
-          <option value="">All Categories</option>
-          <option value="Seeds">Seeds</option>
-          <option value="Fertilizer">Fertilizer</option>
-          <option value="Labor">Labor</option>
-          <option value="Equipment">Equipment</option>
-          <option value="Transport">Transport</option>
-          <option value="Other">Other</option>
-        </select>
+      <div className="expense-page">
+        <h2 className="page-title">Expense Tracker</h2>
 
-        <input
-          type="date"
-          name="startDate"
-          value={filter.startDate}
-          onChange={(e) => setFilter({ ...filter, startDate: e.target.value })}
-        />
+        {/* Filters */}
+        <section className="filter-section">
+          <select
+            name="category"
+            value={filter.category}
+            onChange={handleFilterChange}
+          >
+            <option value="">All Categories</option>
+            <option value="Seeds">Seeds</option>
+            <option value="Fertilizer">Fertilizer</option>
+            <option value="Labor">Labor</option>
+            <option value="Equipment">Equipment</option>
+            <option value="Transport">Transport</option>
+            <option value="Other">Other</option>
+          </select>
 
-        <input
-          type="date"
-          name="endDate"
-          value={filter.endDate}
-          onChange={(e) => setFilter({ ...filter, endDate: e.target.value })}
-        />
+          <input
+            type="date"
+            name="startDate"
+            value={filter.startDate}
+            onChange={handleFilterChange}
+          />
+          <input
+            type="date"
+            name="endDate"
+            value={filter.endDate}
+            onChange={handleFilterChange}
+          />
 
-        <button onClick={loadExpenses} className="apply-btn">
-          Apply Filters
-        </button>
+          <button className="apply-btn" onClick={loadExpenses}>Apply</button>
+          <button className="clear-btn" onClick={clearFilters}>Clear</button>
+        </section>
 
-        <button onClick={clearFilters} className="clear-btn">
-          Clear Filters
-        </button>
-      </div>
+        <div className="export-section">
+          <button className="export-btn" onClick={handleExportCSV}>
+            Export to CSV
+          </button>
+        </div>
 
-      {/* Export Button */}
-      <button onClick={handleExportCSV} className="export-btn">
-        Export to CSV
-      </button>
+        {/* Form */}
+        <form className="expense-form" onSubmit={handleSubmit}>
+          <select
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Category</option>
+            <option value="Seeds">Seeds</option>
+            <option value="Fertilizer">Fertilizer</option>
+            <option value="Labor">Labor</option>
+            <option value="Equipment">Equipment</option>
+            <option value="Transport">Transport</option>
+            <option value="Other">Other</option>
+          </select>
 
-      {/* Form to Add/Edit Expense */}
-      <form onSubmit={handleSubmit} className="expense-form">
-        <select
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Category</option>
-          <option value="Seeds">Seeds</option>
-          <option value="Fertilizer">Fertilizer</option>
-          <option value="Labor">Labor</option>
-          <option value="Equipment">Equipment</option>
-          <option value="Transport">Transport</option>
-          <option value="Other">Other</option>
-        </select>
+          <input
+            type="number"
+            name="amount"
+            placeholder="Amount"
+            value={form.amount}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="number"
-          name="amount"
-          placeholder="Amount"
-          value={form.amount}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="date"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="date"
-          name="date"
-          value={form.date}
-          onChange={handleChange}
-          required
-        />
+          <textarea
+            name="notes"
+            placeholder="Notes"
+            value={form.notes}
+            onChange={handleChange}
+          />
 
-        <textarea
-          name="notes"
-          placeholder="Notes"
-          value={form.notes}
-          onChange={handleChange}
-        ></textarea>
+          <button type="submit">
+            {isEditing ? "Update Expense" : "Add Expense"}
+          </button>
+        </form>
 
-        <button type="submit">
-          {isEditing ? "Update Expense" : "Add Expense"}
-        </button>
-      </form>
-
-      {/* Expense List */}
-      <div className="expense-list">
-        {expenses.length === 0 ? (
-          <p className="empty-state">No expenses recorded.</p>
-        ) : (
-          expenses.map((expense) => (
-            <div key={expense._id} className="expense-card">
-              <div>
-                <h4>{expense.category}</h4>
-                <p>₹{expense.amount}</p>
-                <p>{expense.notes}</p>
-                <p className="date">
-                  {new Date(expense.date).toLocaleDateString()}
-                </p>
+        {/* Expense List */}
+        <div className="expense-list">
+          {expenses.length === 0 ? (
+            <p className="empty-state">No expenses found.</p>
+          ) : (
+            expenses.map((expense) => (
+              <div key={expense._id} className="expense-card">
+                <div className="expense-info">
+                  <h4>{expense.category}</h4>
+                  <p>₹{expense.amount}</p>
+                  <p>{expense.notes}</p>
+                  <p className="date">
+                    {new Date(expense.date).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="actions">
+                  <button
+                    className="edit-btn"
+                    onClick={() => handleEdit(expense)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDelete(expense._id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className="actions">
-                <button
-                  onClick={() => handleEdit(expense)}
-                  className="edit-btn"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(expense._id)}
-                  className="delete-btn"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
-        )}
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

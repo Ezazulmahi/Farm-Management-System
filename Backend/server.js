@@ -7,16 +7,17 @@ import profileRoutes from "./Routes/ProfileRoutes.js";
 import locationRoutes from "./Routes/locationRoutes.js";
 import weatherRoutes from "./Routes/weatherRoutes.js";
 
-
+// Load environment variables
 dotenv.config();
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 
-
-app.use(cors({ origin: "http://localhost:5173" })); 
+// Middleware
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 
-
+// MongoDB Connection
 const connectDB = async () => {
   try {
     console.log("🔄 Connecting to MongoDB...");
@@ -30,15 +31,16 @@ const connectDB = async () => {
 
 connectDB();
 
+// Routes
+app.use("/api/users", userRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/location", locationRoutes);
+app.use("/api/weather", weatherRoutes);
 
-app.use("/api/users", userRoutes);          
-app.use("/api/profile", profileRoutes);     
-app.use("/api/location", locationRoutes);  
-
+// Test Routes
 app.get("/api/test", (req, res) => {
   res.json({ message: "Backend Connected Successfully!" });
 });
-app.use("/api/weather", weatherRoutes); 
 
 app.get("/api/welcome", (req, res) => {
   res.json({
@@ -46,7 +48,7 @@ app.get("/api/welcome", (req, res) => {
   });
 });
 
-
+// Start Server
 app.listen(PORT, () =>
   console.log(`🚀 Server running on http://localhost:${PORT}`)
 );
