@@ -2,7 +2,7 @@
 .home-page {
     height: 100vh;
     width: 100vw;
-    background-image: url('/images/farm-bg.jpg'); /* Replace with your actual image path */
+    background-image: url('/images/bg.jpg'); /* Replace with your actual image path */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

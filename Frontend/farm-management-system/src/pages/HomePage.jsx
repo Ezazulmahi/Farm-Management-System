@@ -51,7 +51,7 @@ const HomePage = () => {
     <div className="home-page">
       {/* Navbar */}
       <div className="nav-bar">
-        <h2>Farm Management</h2>
+        <h2>Farmora</h2>
         <div className="nav-icons">
           <img src="/images/cart.png" alt="Cart" onClick={() => navigate("/cart")} className="nav-icon" />
           <img src="/images/notification.png" alt="Notification" onClick={() => navigate("/notifications")} className="nav-icon" />

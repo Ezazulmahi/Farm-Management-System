@@ -41,7 +41,7 @@ const FarmProfile = () => {
   return (
     <div className="farm-profile-page">
       <div className="nav-bar">
-        <h2>AgroConnect</h2>
+        <h2>Farmora</h2>
         <img src="/images/home.png" alt="Home" className="nav-icon" onClick={goToHome} />
         <img src="/images/cart.png" alt="Cart" className="nav-icon" onClick={goToCart} />
         <img src="/images/notification.png" alt="Notification" className="nav-icon" onClick={goToNotifications} />
