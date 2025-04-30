@@ -31,8 +31,9 @@ const LoginPage = () => {
       localStorage.setItem("userInfo", JSON.stringify(data.user));
       alert("Login successful!");
 
+      // Correct route path
       if (data.user.type === "admin") {
-        navigate('/Dashboard');
+        navigate('/dashboard');  // Use lowercase '/dashboard'
       } else {
         navigate('/home');
       }

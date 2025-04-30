@@ -1,11 +1,7 @@
-// routes/expenseRoutes.js
-const express = require("express");
+// backend/routes/expenseRoutes.js
+import express from "express";
 const router = express.Router();
-const {
-  getExpenses,
-  createExpense,
-  deleteExpense,
-} = require("../controllers/expenseController");
+import { getExpenses, createExpense, deleteExpense } from "../controllers/expenseController.js";
 
 // GET all expenses
 router.get("/", getExpenses);
@@ -16,4 +12,4 @@ router.post("/", createExpense);
 // DELETE an expense
 router.delete("/:id", deleteExpense);
 
-module.exports = router;
+export default router;  // ES Module export

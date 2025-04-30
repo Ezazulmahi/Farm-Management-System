@@ -6,7 +6,6 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -14,6 +13,7 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
 import adminOnlineListRoutes from "./routes/adminOnlineListRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
@@ -21,6 +21,9 @@ import locationRoutes from "./routes/locationRoutes.js";
 import weatherRoutes from "./routes/weatherRoutes.js";
 import farmRoutes from "./routes/farmRoutes.js";
 import bracSeedRoutes from "./routes/bracSeed.js";
+
+// ✅ Import notification routes
+import notificationsRoute from "./routes/notificationsRoute.js";
 
 const uploadDir = path.resolve(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {
@@ -54,6 +57,11 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/location", locationRoutes);
 app.use("/api/weather", weatherRoutes);
 app.use("/api/farms", farmRoutes);
+app.use("/api/bracseed", bracSeedRoutes);
+app.use("/api/orders", adminOnlineListRoutes);
+
+// ✅ Add notifications route
+app.use("/api/notifications", notificationsRoute);
 
 // Test Routes
 app.get("/api/test", (req, res) => {
@@ -65,10 +73,8 @@ app.get("/api/welcome", (req, res) => {
     message: "Welcome to the Farm Management System! Let's manage your farm effectively.",
   });
 });
-app.use("/api/bracseed", bracSeedRoutes);
 
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-app.use("/api/orders", adminOnlineListRoutes);
