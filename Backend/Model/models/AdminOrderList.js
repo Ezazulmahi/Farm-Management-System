@@ -1,18 +1,16 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const AdminOnlineListSchema = new mongoose.Schema({
+const orderSchema = new mongoose.Schema({
   products: [
     {
-      name: { type: String, required: true },
-      quantity: { type: Number, required: true },
-      price: { type: Number, required: true },
-      // Add more fields if your product has more (like image, description)
+      name: String,
+      quantity: Number,
+      price: Number,
     },
   ],
   paymentMethod: {
     type: String,
-    enum: ["cash", "bkash"],
-    required: true,
+    enum: ['cash', 'bkash'],
   },
   orderTime: {
     type: Date,
@@ -20,6 +18,6 @@ const AdminOnlineListSchema = new mongoose.Schema({
   },
 });
 
-const AdminOnlineList = mongoose.model("AdminOnlineList", AdminOnlineListSchema);
+const AdminOnlineList = mongoose.model('AdminOnlineList', orderSchema);
 
 export default AdminOnlineList;

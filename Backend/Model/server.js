@@ -6,7 +6,6 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -54,6 +53,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/location", locationRoutes);
 app.use("/api/weather", weatherRoutes);
 app.use("/api/farms", farmRoutes);
+app.use("/api/bracseed", bracSeedRoutes);
 
 // Test Routes
 app.get("/api/test", (req, res) => {
@@ -65,10 +65,10 @@ app.get("/api/welcome", (req, res) => {
     message: "Welcome to the Farm Management System! Let's manage your farm effectively.",
   });
 });
-app.use("/api/bracseed", bracSeedRoutes);
+
+app.use("/api/orders", adminOnlineListRoutes); // Ensure this is correctly set
 
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-app.use("/api/orders", adminOnlineListRoutes);

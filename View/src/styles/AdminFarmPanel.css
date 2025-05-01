@@ -1,76 +1,102 @@
+/* Ensure the admin panel can scroll when content overflows */
 .admin-farm-panel {
-    padding: 30px;
-    max-width: 800px;
-    margin: auto;
-    font-family: Arial, sans-serif;
-    background-color: #80b3e6;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
-  }
-  
-  h2 {
-    text-align: center;
-    color: #2d2d2d;
-    margin-bottom: 20px;
-  }
-  
-  .farm-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .farm-form input,
-  .farm-form button {
-    padding: 10px;
-    font-size: 16px;
-  }
-  
-  .farm-form button {
-    background-color: #28a745;
-    color: rgb(186, 90, 90);
-    border: none;
-    cursor: pointer;
-  }
-  
-  .farm-form button:disabled {
-    background-color: #aaa;
-  }
-  
-  .message {
-    text-align: center;
-    color: #155724;
-    margin-top: 10px;
-  }
-  
-  .farm-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 20px;
-    margin-top: 30px;
-  }
-  
-  .farm-card {
-    background-color: rgb(113, 68, 68);
-    border: 1px solid #c6bbbb;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-  }
-  
-  .farm-card img {
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 5px;
-  }
-  
-  .farm-card button {
-    margin-top: 10px;
-    background-color: #dc3545;
-    color: rgb(237, 29, 29);
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
+  padding: 30px;
+  max-width: 800px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+  background-color: #80b3e6;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  min-height: 100vh; /* Ensure the panel can expand to full screen height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Title */
+.admin-farm-panel h2 {
+  text-align: center;
+  color: #2d2d2d;
+  margin-bottom: 20px;
+}
+
+/* Form layout */
+.farm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px; /* Add space for scrollability */
+}
+
+.farm-form input,
+.farm-form button {
+  padding: 10px;
+  font-size: 16px;
+}
+
+.farm-form button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.farm-form button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.message {
+  text-align: center;
+  color: #155724;
+  margin-top: 10px;
+}
+
+/* Farm cards */
+.farm-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+  overflow-y: auto; /* Ensure the list of farms can scroll if needed */
+}
+
+.farm-card {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.farm-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.farm-card button {
+  margin-top: 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* Ensure scroll behavior works for the whole page */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
