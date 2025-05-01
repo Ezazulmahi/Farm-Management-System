@@ -1,18 +1,48 @@
-// components/DashboardCard.jsx
-import React from 'react';
- import { cn } from "../lib/utils"; 
+import React from "react";
+import { IconContext } from "react-icons";
+import { FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
+import "../styles/DashboardCard.css"; // Assuming you have a CSS file for styling
 
+const DashboardCard = ({ 
+  title, 
+  value, 
+  icon: Icon, 
+  trend, 
+  trendValue, 
+  alertLevel 
+}) => {
+  const getAlertClass = () => {
+    switch(alertLevel) {
+      case 'high': return 'high-alert';
+      case 'medium': return 'medium-alert';
+      default: return '';
+    }
+  };
 
-const DashboardCard = ({ title, value, icon: Icon, className }) => {
+  const getTrendIcon = () => {
+    if (trend === 'up') return '↑';
+    if (trend === 'down') return '↓';
+    return '';
+  };
+
+  const getTrendClass = () => {
+    if (trend === 'up') return 'trend-up';
+    if (trend === 'down') return 'trend-down';
+    return '';
+  };
+
   return (
-    <div className={cn("bg-white shadow-md rounded-2xl p-5 flex items-center justify-between", className)}>
-      <div>
-        <h4 className="text-sm text-gray-500 font-medium">{title}</h4>
-        <p className="text-2xl font-bold text-gray-800 mt-1">{value}</p>
-      </div>
-      {Icon && (
-        <div className="text-3xl text-primary-500 bg-primary-100 p-3 rounded-full">
+    <div className={`dashboard-card ${getAlertClass()}`}>
+      <div className="card-header">
+        <h3>{title}</h3>
+        <IconContext.Provider value={{ className: "card-icon" }}>
           <Icon />
+        </IconContext.Provider>
+      </div>
+      <div className="card-value">{value}</div>
+      {(trend && trendValue) && (
+        <div className={`card-trend ${getTrendClass()}`}>
+          {getTrendIcon()} {trendValue}
         </div>
       )}
     </div>
