@@ -1,20 +1,11 @@
 // src/api/adminAPI.js
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 export const getDashboardData = async () => {
-    // Simulate API delay
-    await new Promise((res) => setTimeout(res, 800));
-  
-    return {
-      totalProducts: 52,
-      lowInventoryCount: 5,
-      pendingTasks: 8,
-      expenses: [
-        { _id: "Seeds", total: 4000 },
-        { _id: "Fertilizers", total: 2500 },
-        { _id: "Labor", total: 3200 },
-        { _id: "Machinery", total: 1500 },
-        { _id: "Transport", total: 1800 },
-      ],
-    };
-  };
-  
+  const response = await fetch(`${API_BASE_URL}/dashboard`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch dashboard data");
+  }
+  return response.json();
+};

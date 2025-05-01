@@ -3,19 +3,19 @@ import { useNavigate } from "react-router-dom";
 import DashboardCard from "../components/DashboardCard";
 import DashboardChart from "../components/DashboardChart";
 import { getDashboardData } from "../api/adminAPI";
-import {
-  Package,
-  AlertTriangle,
-  ClipboardList,
-  Wallet,
-} from "lucide-react";
-import "../styles/AdminDashboard.css"; // Optional: for extra custom CSS if needed
+import { Package, AlertTriangle, ClipboardList, Wallet } from "lucide-react";
+import { ClipLoader } from "react-spinners";
+import Sidebar from "../components/Sidebar";
+import PropTypes from "prop-types";
+import "../styles/AdminDashboard.css";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Fetch dashboard data
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -23,6 +23,7 @@ const AdminDashboard = () => {
         setStats(data);
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
+        setError("Unable to load dashboard data. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -30,47 +31,34 @@ const AdminDashboard = () => {
     fetchStats();
   }, []);
 
+  // Handle logout
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
     navigate("/login");
   };
 
-  const totalExpense =
-    stats?.expenses.reduce((sum, e) => sum + e.total, 0) || 0;
+  // Calculate total expenses
+  const totalExpense = stats?.expenses.reduce((sum, e) => sum + e.total, 0) || 0;
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-cyan-100 to-blue-100">
-
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md p-6 flex flex-col justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-green-700 mb-6">Admin Panel</h1>
-          <ul className="space-y-3 text-base font-medium text-gray-700">
-            <li><a href="/admin/dashboard" className="hover:text-blue-600">Dashboard</a></li>
-            <li><a href="/admin/expenses" className="hover:text-blue-600">Expenses</a></li>
-            <li><a href="/admin/inventory" className="hover:text-blue-600">Inventory</a></li>
-            <li><a href="/admin/products" className="hover:text-blue-600">Products</a></li>
-            <li><a href="/admin/tasks" className="hover:text-blue-600">Tasks</a></li>
-          </ul>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="bg-green-600 text-white mt-6 py-2 px-4 rounded hover:bg-green-700"
-        >
-          Logout
-        </button>
-      </aside>
-
-      {/* Main Content */}
+      <Sidebar handleLogout={handleLogout} />
       <main className="flex-1 p-6 overflow-y-auto">
         <h2 className="text-3xl font-bold mb-6 text-gray-800">Welcome back, Admin!</h2>
 
+        {/* Error Message */}
+        {error && <p className="text-red-500">{error}</p>}
+
+        {/* Loading Spinner */}
         {loading ? (
-          <p className="text-gray-600">Loading data...</p>
+          <div className="flex justify-center items-center">
+            <ClipLoader color="#36d7b7" size={50} />
+          </div>
         ) : !stats ? (
           <p className="text-red-500">Failed to load dashboard data.</p>
         ) : (
           <>
+            {/* Dashboard Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <DashboardCard
                 title="Total Products"
@@ -94,12 +82,20 @@ const AdminDashboard = () => {
               />
             </div>
 
+            {/* Dashboard Chart */}
             <DashboardChart data={stats.expenses} />
           </>
         )}
       </main>
     </div>
   );
+};
+
+// Prop validation for DashboardCard
+DashboardCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  icon: PropTypes.elementType.isRequired,
 };
 
 export default AdminDashboard;

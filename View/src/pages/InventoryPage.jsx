@@ -1,6 +1,7 @@
 // pages/InventoryPage.jsx
 import React, { useEffect, useState } from "react";
 import { fetchProducts, updateProduct } from "../api/productAPI";
+import "../styles/InventoryPage.css";
 
 const InventoryPage = () => {
   const [products, setProducts] = useState([]);
@@ -10,26 +11,41 @@ const InventoryPage = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      const data = await fetchProducts();
-      setProducts(data);
-      setLoading(false);
+      try {
+        const data = await fetchProducts();
+        setProducts(data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        alert("Error loading inventory. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     };
     loadData();
   }, []);
 
   const handleRestock = async (id) => {
-    const product = products.find((p) => p._id === id);
-    const updated = {
-      ...product,
-      quantity: product.quantity + parseInt(restockQty),
-    };
-    await updateProduct(id, updated);
-    setRestockQty("");
-    setEditingId(null);
-
-    // reload list
-    const updatedData = await fetchProducts();
-    setProducts(updatedData);
+    try {
+      const product = products.find((p) => p._id === id);
+      if (!restockQty || parseInt(restockQty) <= 0) {
+        alert("Please enter a valid quantity.");
+        return;
+      }
+      const updated = {
+        ...product,
+        quantity: product.quantity + parseInt(restockQty),
+      };
+      await updateProduct(id, updated);
+      setProducts((prev) =>
+        prev.map((p) => (p._id === id ? { ...p, quantity: updated.quantity } : p))
+      );
+    } catch (error) {
+      console.error("Failed to update product:", error);
+      alert("Error updating product. Please try again.");
+    } finally {
+      setRestockQty("");
+      setEditingId(null);
+    }
   };
 
   if (loading) return <div className="p-4">Loading inventory...</div>;
@@ -49,7 +65,7 @@ const InventoryPage = () => {
         </thead>
         <tbody>
           {products.map((p) => (
-            <tr key={p._id}>
+            <tr key={p._id} className={editingId === p._id ? "bg-yellow-100" : ""}>
               <td className="p-2 border">{p.name}</td>
               <td className="p-2 border">{p.quantity}</td>
               <td className="p-2 border">

@@ -36,16 +36,28 @@ export const deleteExpense = async (id) => {
   }
 };
 
-// api/expenseAPI.js
-
 // Update an existing expense
 export const updateExpense = async (id, expenseData) => {
-    try {
-      const response = await axios.put(`${API_URL}/${id}`, expenseData);
-      return response.data;
-    } catch (error) {
-      console.error("Error updating expense:", error);
-      throw error;
-    }
-  };
-  
+  try {
+    const response = await axios.put(`${API_URL}/${id}`, expenseData);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating expense:", error);
+    throw error;
+  }
+};
+
+// Load expenses with filter
+const loadExpenses = async () => {
+  setLoading(true);
+  try {
+    const data = await getExpenses(filter);
+    console.log("API Response:", data); // Debugging
+    setExpenses(Array.isArray(data) ? data : []); // Ensure it's an array
+  } catch (error) {
+    setError("Failed to load expenses. Please try again.");
+    console.error("Error loading expenses:", error);
+  } finally {
+    setLoading(false);
+  }
+};

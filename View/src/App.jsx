@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Remove duplicate import
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Startpage from "./pages/Startpage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -18,11 +19,18 @@ import Post from "./pages/Adminpost";
 import Weather from "./pages/WeatherPage";
 import Bracseed from "./pages/Farms/BracSeed";
 import AdminFarmPanel from "./pages/AdminFarmPanel";
+import ProductPage from "./pages/ProductPage";
 
 const App = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Startpage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/farm-profile" element={<FarmProfile />} />
         <Route path="/brac-seed" element={<Bracseed />} />
         <Route path="/panel" element={<AdminFarmPanel />} />
         <Route path="/post" element={<Post />} />
@@ -32,8 +40,15 @@ const App = () => {
         <Route path="/notifications" element={<Notification />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/inventory" element={<InventoryPage />} />
-        <Route path="/admin/tasks" element={<TaskPage />} />
+        <Route path="/tasks" element={<TaskPage />} />
         <Route path="/admin/expenses" element={<ExpensePage />} />
+        <Route path="/tracking" element={<LocationTracking />} />
+        <Route path="/admin" element={<AdminFarmPanel />} />
+        <Route path="/admin/farm" element={<AdminFarmPanel />} />
+        <Route path="/products" element={<ProductPage />} /> 
+
+        {/* Optional: 404 Not Found fallback */}
+        <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>
     </Router>
   );

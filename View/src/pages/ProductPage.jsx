@@ -1,4 +1,3 @@
-// src/pages/ProductPage.jsx
 import React, { useState, useEffect } from "react";
 import {
   fetchProducts,
@@ -6,6 +5,8 @@ import {
   updateProduct,
   deleteProduct,
 } from "../api/productAPI";
+import "../styles/ProductPage.css";
+import Sidebar from "../components/Sidebar";
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -17,18 +18,26 @@ const ProductPage = () => {
     category: "",
   });
   const [editId, setEditId] = useState(null);
-  const [error, setError] = useState(null);  // For error handling
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState("name");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     loadProducts();
   }, []);
 
   const loadProducts = async () => {
+    setLoading(true);
     try {
       const data = await fetchProducts();
       setProducts(data);
     } catch (err) {
-      setError("Failed to load products.");
+      setError("Failed to load products. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,7 +47,12 @@ const ProductPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.name || !form.price || !form.quantity) {
+      setError("Please fill in all required fields (Name, Price, Quantity).");
+      return;
+    }
     try {
+      setLoading(true);
       if (editId) {
         await updateProduct(editId, form);
       } else {
@@ -52,9 +66,12 @@ const ProductPage = () => {
         category: "",
       });
       setEditId(null);
-      loadProducts();
+      await loadProducts();
+      setError(null);
     } catch (err) {
-      setError("Failed to save product.");
+      setError(err.message || "Failed to save product. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,111 +84,161 @@ const ProductPage = () => {
       category: product.category,
     });
     setEditId(product._id);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteProduct(id);
-      loadProducts();
-    } catch (err) {
-      setError("Failed to delete product.");
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      try {
+        setLoading(true);
+        await deleteProduct(id);
+        await loadProducts();
+      } catch (err) {
+        setError("Failed to delete product. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
+  const filteredProducts = products.filter(
+    (prod) =>
+      prod.name.toLowerCase().includes(search.toLowerCase()) ||
+      prod.category?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortKey === "price" || sortKey === "quantity") {
+      return a[sortKey] - b[sortKey];
+    }
+    return a[sortKey]?.localeCompare(b[sortKey]);
+  });
+
+  const paginatedProducts = sortedProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Product Management</h2>
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <Sidebar />
 
-      {/* Error Handling */}
-      {error && <div className="text-red-600 mb-4">{error}</div>}
+      {/* Main Content */}
+      <div className="flex-1 p-6 main-content">
+        <h1 className="text-2xl">Product Management</h1>
 
-      {/* Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded-xl shadow mb-6"
-      >
-        <input
-          name="name"
-          placeholder="Product Name"
-          value={form.name}
-          onChange={handleChange}
-          className="p-2 border rounded"
-          required
-        />
-        <input
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          className="p-2 border rounded"
-        />
-        <input
-          name="quantity"
-          type="number"
-          placeholder="Quantity"
-          value={form.quantity}
-          onChange={handleChange}
-          className="p-2 border rounded"
-          required
-        />
-        <input
-          name="category"
-          placeholder="Category (e.g. Vegetables)"
-          value={form.category}
-          onChange={handleChange}
-          className="p-2 border rounded"
-        />
-        <input
-          name="price"
-          type="number"
-          placeholder="Price (₹)"
-          value={form.price}
-          onChange={handleChange}
-          className="p-2 border rounded"
-        />
+        {error && (
+          <div className="error-message">
+            <span>{error}</span>
+            <button onClick={() => setError(null)}>&times;</button>
+          </div>
+        )}
 
-        <button
-          type="submit"
-          className="bg-green-600 text-white py-2 rounded col-span-1 md:col-span-2"
-        >
-          {editId ? "Update Product" : "Add Product"}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="name"
+            placeholder="Product Name"
+            value={form.name}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="category"
+            placeholder="Category"
+            value={form.category}
+            onChange={handleChange}
+          />
+          <input
+            type="number"
+            name="price"
+            placeholder="Price"
+            value={form.price}
+            onChange={handleChange}
+          />
+          <input
+            type="number"
+            name="quantity"
+            placeholder="Quantity"
+            value={form.quantity}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="description"
+            placeholder="Description"
+            value={form.description}
+            onChange={handleChange}
+            className="col-span-2"
+          />
+          <div className="col-span-2">
+            <button type="submit" className="bg-green-600" disabled={loading}>
+              {editId ? "Update Product" : "Add Product"}
+            </button>
+          </div>
+        </form>
 
-      {/* Product List */}
-      <div className="grid gap-4">
-        {products.length === 0 ? (
-          <p className="text-gray-500">No products available.</p>
+        <div className="grid grid-cols-2 gap-4 mt-8">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
+            <option value="name">Sort by Name</option>
+            <option value="price">Sort by Price</option>
+            <option value="quantity">Sort by Quantity</option>
+          </select>
+        </div>
+
+        {loading ? (
+          <div className="loading">Loading products...</div>
         ) : (
-          products.map((prod) => (
-            <div
-              key={prod._id}
-              className="bg-white p-4 shadow rounded-xl flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-semibold text-lg">{prod.name}</h3>
-                <p className="text-sm text-gray-600">{prod.description}</p>
-                <p className="text-sm text-gray-500">
-                  {prod.quantity} pcs – ₹{prod.price || 0}
-                </p>
-                <p className="text-xs text-gray-400">Category: {prod.category}</p>
+          <>
+            {paginatedProducts.map((product) => (
+              <div
+                key={product._id}
+                className={`card ${product.quantity < 5 ? "highlight" : ""}`}
+              >
+                <div>
+                  <h3>{product.name}</h3>
+                  <p>Category: {product.category}</p>
+                  <p>Price: ${product.price}</p>
+                  <p>Quantity: {product.quantity}</p>
+                </div>
+                <div>
+                  <button
+                    onClick={() => handleEdit(product)}
+                    className="bg-yellow-500"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(product._id)}
+                    className="bg-red-500"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className="flex space-x-2">
+            ))}
+
+            <div className="pagination">
+              {Array.from({
+                length: Math.ceil(sortedProducts.length / itemsPerPage),
+              }).map((_, index) => (
                 <button
-                  onClick={() => handleEdit(prod)}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded"
+                  key={index}
+                  onClick={() => setCurrentPage(index + 1)}
+                  className={currentPage === index + 1 ? "bg-green-600" : ""}
                 >
-                  Edit
+                  {index + 1}
                 </button>
-                <button
-                  onClick={() => handleDelete(prod._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
-                >
-                  Delete
-                </button>
-              </div>
+              ))}
             </div>
-          ))
+          </>
         )}
       </div>
     </div>
