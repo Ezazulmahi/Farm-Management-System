@@ -1,37 +1,32 @@
-// controllers/expenseController.js
-const Expense = require("../models/Expense");
+import Expense from "../Model/models/expenseModel.js";
 
-// @desc    Get all expenses
-// @route   GET /api/expenses
 export const getExpenses = async (req, res) => {
-  try {
-    const expenses = await Expense.find().sort({ date: -1 });
-    res.status(200).json(expenses);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch expenses." });
+  const { category, startDate, endDate } = req.query;
+
+  const filter = {};
+  if (category) filter.category = category;
+  if (startDate || endDate) {
+    filter.date = {};
+    if (startDate) filter.date.$gte = new Date(startDate);
+    if (endDate) filter.date.$lte = new Date(endDate);
   }
+
+  const expenses = await Expense.find(filter).sort({ date: -1 });
+  res.json(expenses);
 };
 
-// @desc    Create a new expense
-// @route   POST /api/expenses
 export const createExpense = async (req, res) => {
-  try {
-    const { category, amount, notes, date } = req.body;
-    const newExpense = new Expense({ category, amount, notes, date });
-    const saved = await newExpense.save();
-    res.status(201).json(saved);
-  } catch (err) {
-    res.status(400).json({ message: "Failed to create expense." });
-  }
+  const newExpense = new Expense(req.body);
+  await newExpense.save();
+  res.status(201).json(newExpense);
 };
 
-// @desc    Delete an expense
-// @route   DELETE /api/expenses/:id
+export const updateExpense = async (req, res) => {
+  const updated = await Expense.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  res.json(updated);
+};
+
 export const deleteExpense = async (req, res) => {
-  try {
-    await Expense.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Expense deleted" });
-  } catch (err) {
-    res.status(500).json({ message: "Failed to delete expense." });
-  }
+  await Expense.findByIdAndDelete(req.params.id);
+  res.json({ message: "Expense deleted" });
 };

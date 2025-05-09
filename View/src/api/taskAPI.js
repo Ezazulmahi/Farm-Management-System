@@ -1,27 +1,66 @@
-import axios from "axios";
+import axios from 'axios';
 
-const BASE_URL = "http://localhost:5000/api/tasks"; // Adjust if needed
-
-// GET all tasks
 export const fetchTasks = async () => {
-  const res = await axios.get(BASE_URL);
-  return res.data;
+  const source = axios.CancelToken.source();
+  try {
+    const res = await axios.get('/api/tasks', { cancelToken: source.token });
+    if (!Array.isArray(res.data)) {
+      throw new Error("Invalid API response: Expected an array");
+    }
+    const validTasks = res.data.filter(
+      (task) => task && task._id && task.status && task.dueDate && task.title
+    );
+    if (validTasks.length < res.data.length) {
+      console.warn("Filtered out invalid tasks:", res.data.length - validTasks.length);
+    }
+    return validTasks;
+  } catch (err) {
+    if (axios.isCancel(err)) {
+      return [];
+    }
+    console.error("Fetch tasks error:", err.response?.data || err.message);
+    throw new Error(err.response?.data?.message || "Failed to fetch tasks");
+  }
 };
 
-// CREATE a new task
-export const createTask = async (taskData) => {
-  const res = await axios.post(BASE_URL, taskData);
-  return res.data;
+export const createTask = async (task) => {
+  const source = axios.CancelToken.source();
+  try {
+    const res = await axios.post('/api/tasks', task, { cancelToken: source.token });
+    return res.data;
+  } catch (err) {
+    if (axios.isCancel(err)) {
+      return null;
+    }
+    console.error("Create task error:", err.response?.data || err.message);
+    throw new Error(err.response?.data?.message || "Failed to create task");
+  }
 };
 
-// UPDATE a task
-export const updateTask = async (id, taskData) => {
-  const res = await axios.put(`${BASE_URL}/${id}`, taskData);
-  return res.data;
+export const updateTask = async (id, updates) => {
+  const source = axios.CancelToken.source();
+  try {
+    const res = await axios.put(`/api/tasks/${id}`, updates, { cancelToken: source.token });
+    return res.data;
+  } catch (err) {
+    if (axios.isCancel(err)) {
+      return null;
+    }
+    console.error("Update task error:", err.response?.data || err.message);
+    throw new Error(err.response?.data?.message || "Failed to update task");
+  }
 };
 
-// DELETE a task
 export const deleteTask = async (id) => {
-  const res = await axios.delete(`${BASE_URL}/${id}`);
-  return res.data;
+  const source = axios.CancelToken.source();
+  try {
+    const res = await axios.delete(`/api/tasks/${id}`, { cancelToken: source.token });
+    return res.data;
+  } catch (err) {
+    if (axios.isCancel(err)) {
+      return null;
+    }
+    console.error("Delete task error:", err.response?.data || err.message);
+    throw new Error(err.response?.data?.message || "Failed to delete task");
+  }
 };

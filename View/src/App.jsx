@@ -23,7 +23,7 @@ import ProductPage from "./pages/ProductPage";
 
 const App = () => {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
         <Route path="/" element={<Startpage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -45,9 +45,7 @@ const App = () => {
         <Route path="/tracking" element={<LocationTracking />} />
         <Route path="/admin" element={<AdminFarmPanel />} />
         <Route path="/admin/farm" element={<AdminFarmPanel />} />
-        <Route path="/products" element={<ProductPage />} /> 
-
-        {/* Optional: 404 Not Found fallback */}
+        <Route path="/products" element={<ProductPage />} />
         <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>
     </Router>

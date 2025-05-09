@@ -1,12 +1,12 @@
-// TaskForm.jsx
 import React, { useState } from "react";
 
-const TaskForm = ({ onSubmit }) => {
+const TaskForm = ({ onSubmit, disabled }) => {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    assignedTo: "",
     dueDate: "",
+    assignedTo: "",
+    status: "Pending",
   });
 
   const handleChange = (e) => {
@@ -15,49 +15,63 @@ const TaskForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (form.title.trim().length < 3) {
-      alert("Title must be at least 3 characters.");
+    if (!form.title || !form.dueDate || !form.assignedTo) {
+      alert("Please fill in all required fields.");
       return;
     }
     onSubmit(form);
-    setForm({ title: "", description: "", assignedTo: "", dueDate: "" });
+    setForm({
+      title: "",
+      description: "",
+      dueDate: "",
+      assignedTo: "",
+      status: "Pending",
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4 bg-white shadow-lg rounded-2xl p-6 mb-8">
-      <input
-        name="title"
-        placeholder="Task Title"
-        value={form.title}
-        onChange={handleChange}
-        className="p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400"
-        required
-      />
-      <input
-        name="assignedTo"
-        placeholder="Assign To"
-        value={form.assignedTo}
-        onChange={handleChange}
-        className="p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400"
-        required
-      />
-      <input
-        type="date"
-        name="dueDate"
-        value={form.dueDate}
-        onChange={handleChange}
-        className="p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400"
-        required
-      />
-      <input
-        name="description"
-        placeholder="Description"
-        value={form.description}
-        onChange={handleChange}
-        className="p-3 border border-gray-300 rounded-xl md:col-span-2 focus:outline-none focus:ring-2 focus:ring-green-400"
-      />
-      <button type="submit" className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-xl transition md:col-span-2">
-        Add Task
+    <form onSubmit={handleSubmit} className="task-form">
+      <h3>Add New Task</h3>
+      <div className="form-group">
+        <label>Title:</label>
+        <input
+          type="text"
+          name="title"
+          value={form.title}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label>Description:</label>
+        <textarea
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="form-group">
+        <label>Due Date:</label>
+        <input
+          type="date"
+          name="dueDate"
+          value={form.dueDate}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label>Assigned To:</label>
+        <input
+          type="text"
+          name="assignedTo"
+          value={form.assignedTo}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <button type="submit" disabled={disabled}>
+        {disabled ? "Processing..." : "Add Task"}
       </button>
     </form>
   );

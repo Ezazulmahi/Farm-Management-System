@@ -1,29 +1,64 @@
-// TaskCard.jsx
-import React from "react";
+import React, { useState } from "react";
 
-const TaskCard = ({ task, onComplete, onDelete }) => {
+const TaskCard = ({ task, onComplete, onDelete, disabled }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Validate task prop
+  if (!task || !task._id || !task.status || !task.dueDate || !task.title) {
+    console.warn("Invalid task prop:", task);
+    return null; // Skip rendering invalid tasks
+  }
+
   const isOverdue = task.status !== "Completed" && new Date(task.dueDate) < new Date();
 
+  const handleComplete = async () => {
+    setIsProcessing(true);
+    try {
+      await onComplete();
+    } catch (error) {
+      console.error("Failed to complete task:", error);
+    }
+    setIsProcessing(false);
+  };
+
+  const handleDelete = async () => {
+    setIsProcessing(true);
+    try {
+      await onDelete();
+    } catch (error) {
+      console.error("Failed to delete task:", error);
+    }
+    setIsProcessing(false);
+  };
+
   return (
-    <div className={`bg-white shadow-lg rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center border-2 transition ${isOverdue ? "border-red-500" : "border-transparent"} hover:border-green-400`}>      
-      <div className="space-y-1">
-        <h4 className="font-bold text-xl text-gray-800">{task.title}</h4>
-        <p className="text-sm text-gray-600">{task.description}</p>
-        <p className="text-sm text-gray-500">
+    <div className={`task-card ${isOverdue ? "overdue" : ""}`}>
+      <div className="task-info">
+        <h4>{task.title}</h4>
+        <p>{task.description || "No description"}</p>
+        <p>
           👤 {task.assignedTo} | 📅 {new Date(task.dueDate).toLocaleDateString()}
         </p>
-        <span className={`inline-block px-3 py-1 text-xs rounded-full font-semibold mt-1 ${task.status === "Completed" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
-          {task.status} {isOverdue && <span className="ml-1 text-red-600">⚠️ Overdue</span>}
+        <span className={`status ${task.status.toLowerCase()}`}>
+          {task.status} {isOverdue && <span className="overdue">⚠️ Overdue</span>}
         </span>
       </div>
-      <div className="flex gap-2 mt-4 md:mt-0">
+      <div className="task-actions">
         {task.status !== "Completed" && (
-          <button onClick={onComplete} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl transition">
-            Complete
+          <button
+            onClick={handleComplete}
+            disabled={isProcessing || disabled}
+            className="complete"
+          >
+            {isProcessing ? "Processing..." : "Complete"}
           </button>
         )}
-        <button onClick={onDelete} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl transition">
-          Delete
+        <button
+          onClick={handleDelete}
+          disabled={isProcessing || disabled}
+          className="delete"
+        >
+          {isProcessing ? "Processing..." : "Delete"}
         </button>
       </div>
     </div>

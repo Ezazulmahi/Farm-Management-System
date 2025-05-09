@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from "react";
-import {
-  fetchProducts,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-} from "../api/productAPI";
-import "../styles/ProductPage.css";
+import PropTypes from "prop-types";
+import { fetchProducts, createProduct } from "../api/productAPI";
+import { debounce } from "lodash";
 import Sidebar from "../components/Sidebar";
+import SearchBar from "../components/SearchBar";
+import ProductTable from "../components/ProductTable";
+import Pagination from "../components/Pagination";
+import ProductForm from "../components/ProductForm";
+import { toast } from "react-toastify";
+import "../styles/ProductPage.css";
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    price: "",
-    quantity: "",
-    category: "",
-  });
-  const [editId, setEditId] = useState(null);
-  const [error, setError] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,222 +22,109 @@ const ProductPage = () => {
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [search, sortKey, currentPage]);
 
   const loadProducts = async () => {
     setLoading(true);
     try {
-      const data = await fetchProducts();
-      setProducts(data);
-    } catch (err) {
-      setError("Failed to load products. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.name || !form.price || !form.quantity) {
-      setError("Please fill in all required fields (Name, Price, Quantity).");
-      return;
-    }
-    try {
-      setLoading(true);
-      if (editId) {
-        await updateProduct(editId, form);
-      } else {
-        await createProduct(form);
-      }
-      setForm({
-        name: "",
-        description: "",
-        price: "",
-        quantity: "",
-        category: "",
+      const { data, total } = await fetchProducts({
+        search,
+        sort: sortKey,
+        page: currentPage,
+        limit: itemsPerPage,
       });
-      setEditId(null);
-      await loadProducts();
-      setError(null);
+      setProducts(data);
+      setTotalCount(total);
     } catch (err) {
-      setError(err.message || "Failed to save product. Please try again.");
+      const message = "Failed to load products.";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (product) => {
-    setForm({
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      quantity: product.quantity,
-      category: product.category,
-    });
-    setEditId(product._id);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      try {
-        setLoading(true);
-        await deleteProduct(id);
-        await loadProducts();
-      } catch (err) {
-        setError("Failed to delete product. Please try again.");
-      } finally {
-        setLoading(false);
-      }
+  const handleCreate = async (data) => {
+    setLoading(true);
+    try {
+      await createProduct(data);
+      toast.success("Product created successfully!");
+      loadProducts();
+    } catch (err) {
+      const message = err.message || "Failed to create product.";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const filteredProducts = products.filter(
-    (prod) =>
-      prod.name.toLowerCase().includes(search.toLowerCase()) ||
-      prod.category?.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortKey === "price" || sortKey === "quantity") {
-      return a[sortKey] - b[sortKey];
-    }
-    return a[sortKey]?.localeCompare(b[sortKey]);
-  });
-
-  const paginatedProducts = sortedProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const handleSearch = debounce((value) => {
+    setSearch(value);
+    setCurrentPage(1);
+  }, 300);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
+    <div className="flex min-h-screen">
       <Sidebar />
-
-      {/* Main Content */}
-      <div className="flex-1 p-6 main-content">
-        <h1 className="text-2xl">Product Management</h1>
-
+      <div className="main-content">
+        <h1>Product Management</h1>
         {error && (
-          <div className="error-message">
+          <div className="error-message" role="alert">
             <span>{error}</span>
-            <button onClick={() => setError(null)}>&times;</button>
+            <button onClick={() => setError(null)} aria-label="Dismiss error">
+              &times;
+            </button>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Product Name"
-            value={form.name}
-            onChange={handleChange}
+        {/* Add Product Form */}
+        <div className="form-container">
+          <h2>Add Product</h2>
+          <ProductForm
+            onSubmit={handleCreate}
+            submitText="Add Product"
+            loading={loading}
           />
-          <input
-            type="text"
-            name="category"
-            placeholder="Category"
-            value={form.category}
-            onChange={handleChange}
-          />
-          <input
-            type="number"
-            name="price"
-            placeholder="Price"
-            value={form.price}
-            onChange={handleChange}
-          />
-          <input
-            type="number"
-            name="quantity"
-            placeholder="Quantity"
-            value={form.quantity}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="description"
-            placeholder="Description"
-            value={form.description}
-            onChange={handleChange}
-            className="col-span-2"
-          />
-          <div className="col-span-2">
-            <button type="submit" className="bg-green-600" disabled={loading}>
-              {editId ? "Update Product" : "Add Product"}
-            </button>
-          </div>
-        </form>
+        </div>
 
-        <div className="grid grid-cols-2 gap-4 mt-8">
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
+        {/* Search and Sort Controls */}
+        <div className="search-sort-container">
+          <SearchBar onSearch={handleSearch} />
+          <select
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value)}
+            aria-label="Sort products"
+          >
             <option value="name">Sort by Name</option>
             <option value="price">Sort by Price</option>
             <option value="quantity">Sort by Quantity</option>
           </select>
         </div>
 
+        {/* Product List and Pagination */}
         {loading ? (
-          <div className="loading">Loading products...</div>
+          <div className="loading" aria-live="polite">
+            Loading products...
+          </div>
         ) : (
           <>
-            {paginatedProducts.map((product) => (
-              <div
-                key={product._id}
-                className={`card ${product.quantity < 5 ? "highlight" : ""}`}
-              >
-                <div>
-                  <h3>{product.name}</h3>
-                  <p>Category: {product.category}</p>
-                  <p>Price: ${product.price}</p>
-                  <p>Quantity: {product.quantity}</p>
-                </div>
-                <div>
-                  <button
-                    onClick={() => handleEdit(product)}
-                    className="bg-yellow-500"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(product._id)}
-                    className="bg-red-500"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-
-            <div className="pagination">
-              {Array.from({
-                length: Math.ceil(sortedProducts.length / itemsPerPage),
-              }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index + 1)}
-                  className={currentPage === index + 1 ? "bg-green-600" : ""}
-                >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
+            <ProductTable products={products} onRefresh={loadProducts} />
+            <Pagination
+              total={totalCount}
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+            />
           </>
         )}
       </div>
     </div>
   );
+};
+
+ProductPage.propTypes = {
+  // No props currently, but added for future extensibility
 };
 
 export default ProductPage;

@@ -1,7 +1,7 @@
 // Backend/routes/profileRoutes.js
 
 import express from "express";
-import { getUserProfile } from "../../controllers/profileController.js"; // ✅ match the casing
+import { getUserProfile } from "../../controllers/ProfileController.js";
 
 const router = express.Router();
 
