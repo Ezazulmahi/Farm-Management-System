@@ -17,30 +17,15 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-import adminOnlineListRoutes from "./routes/adminOnlineListRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
-import profileRoutes from "./routes/profileRoutes.js";
-import locationRoutes from "./routes/locationRoutes.js";
-import weatherRoutes from "./routes/weatherRoutes.js";
-import farmRoutes from "./routes/farmRoutes.js";
-import bracSeedRoutes from "./routes/bracSeed.js";
-import sadeeqAgroRoutes from "./routes/sadeeqAgroRoutes.js";
-//import notificationsRoute from "./routes/notificationsRoute.js";
-
+// Ensure Upload Directory Exists
 const uploadDir = path.resolve(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-
+// Middleware
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
-
-// Ensure Uploads Directory Exists
-const uploadDir = path.resolve(__dirname, "../Uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
 app.use("/uploads", express.static(uploadDir));
 
 // MongoDB Connection
@@ -67,8 +52,9 @@ import locationRoutes from "./routes/locationRoutes.js";
 import weatherRoutes from "./routes/weatherRoutes.js";
 import farmRoutes from "./routes/farmRoutes.js";
 import bracSeedRoutes from "./routes/bracSeed.js";
+import sadeeqAgroRoutes from "./routes/sadeeqAgroRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
-import dashboardRoutes from "./Routes/dashboardRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
 
@@ -78,10 +64,10 @@ app.use("/api/location", locationRoutes);
 app.use("/api/weather", weatherRoutes);
 app.use("/api/farms", farmRoutes);
 app.use("/api/orders", adminOnlineListRoutes);
-
 app.use("/api/tasks", taskRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/bracseed", bracSeedRoutes);
+app.use("/api/sadeeqagro", sadeeqAgroRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/expenses", expenseRoutes);
 
@@ -94,8 +80,6 @@ app.get("/api/welcome", (req, res) => {
     message: "Welcome to the Farm Management System! Let's manage your farm effectively.",
   });
 });
-app.use("/api/bracseed", bracSeedRoutes);
-app.use("/api/sadeeqagro",sadeeqAgroRoutes)
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
