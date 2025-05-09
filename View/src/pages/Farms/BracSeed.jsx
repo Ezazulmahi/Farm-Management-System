@@ -15,7 +15,7 @@ const BracSeed = () => {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Fetched products:", data); // Log the data
+        console.log("Fetched products:", data);
         setProducts(data);
       } catch (error) {
         console.error("Error fetching Brac Seed products:", error);
@@ -41,7 +41,7 @@ const BracSeed = () => {
         <img src="/images/Logos/Bracu.jpg" alt="Brac Seed Logo" />
         <h2>Brac Seed</h2>
         <div className="nav-icons">
-           <img
+          <img
             src="/images/home.png"
             alt="Home"
             className="nav-icon"
@@ -65,6 +65,12 @@ const BracSeed = () => {
             className="nav-icon"
             onClick={() => navigate("/profile")}
           />
+          <button
+            className="review-button"
+            onClick={() => navigate("/review")}
+          >
+            Product Review
+          </button>
         </div>
       </div>
 
@@ -77,7 +83,7 @@ const BracSeed = () => {
           products.map((item, index) => (
             <div key={index} className="farmProduct">
               <img
-                src={item.image} // Ensure image URL is correct
+                src={item.image}
                 alt={item.name}
                 className="farmProductImage"
               />
