@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Added for redirection
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/ReviewForm.css';
 
 const questions = [
@@ -10,16 +10,9 @@ const questions = [
 ];
 
 const ReviewForm = () => {
-  const [reviews, setReviews] = useState([]);
   const [text, setText] = useState('');
   const [ratings, setRatings] = useState(Array(questions.length).fill(0));
-  const navigate = useNavigate(); // for navigation after submit
-
-  useEffect(() => {
-    fetch('/api/reviews')
-      .then(res => res.json())
-      .then(data => setReviews(data));
-  }, []);
+  const navigate = useNavigate();
 
   const handleStarClick = (questionIndex, starValue) => {
     const newRatings = [...ratings];
@@ -47,12 +40,15 @@ const ReviewForm = () => {
         throw new Error(`Server error: ${errMsg}`);
       }
 
-      // Redirect to thank you page on success
       navigate('/thank-you');
     } catch (error) {
       console.error('Failed to submit review:', error.message);
       alert('Failed to submit review. Please try again later.');
     }
+  };
+
+  const handlePreviousReviews = () => {
+    navigate('/previous-reviews');
   };
 
   return (
@@ -81,26 +77,14 @@ const ReviewForm = () => {
           onChange={(e) => setText(e.target.value)}
           required
         />
-        <button type="submit">Submit Review</button>
-      </form>
 
-      <div className="review-list">
-        {reviews.map((review, index) => (
-          <div key={review._id || index} className="review-item">
-            {review.ratings?.map((rate, i) => (
-              <div key={i} className="question-block">
-                <strong>{questions[i]}</strong>
-                <div className="stars">
-                  {[1, 2, 3, 4, 5].map((j) => (
-                    <span key={j} className={j <= rate ? 'filled' : ''}>★</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <p>{review.text}</p>
-          </div>
-        ))}
-      </div>
+        <div className="button-group">
+          <button type="submit">Submit Review</button>
+          <button type="button" onClick={handlePreviousReviews}>
+            Previous Reviews
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

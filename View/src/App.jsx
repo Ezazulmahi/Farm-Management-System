@@ -24,6 +24,7 @@ import Soformali from './pages/Farms/Soformali';
 import Cattle from './pages/Farms/Cattle';
 import ReviewForm from './pages/ReviewForm';
 
+import PreviousReviews from './pages/PreviousReviews';
 import ThankYou from './pages/ThankYou';
 import ProductPage from "./pages/ProductPage";
 import NotificationsPage from './pages/NotificationsPage';
@@ -61,6 +62,7 @@ const App = () => {
         <Route path="/products" element={<ProductPage />} />
         <Route path="/review" element={<ReviewForm />} />
         <Route path="*" element={<div>404 - Page Not Found</div>} />
+        <Route path="/previous-reviews" element={<PreviousReviews />} />
       </Routes>
     </Router>
   );
