@@ -5,7 +5,7 @@ import {
   deleteExpense,
   updateExpense,
 } from "../api/expenseAPI";
-import AdminNavbar from "../components/AdminNavbar";
+//import AdminNavbar from "../components/AdminNavbar";
 import "../styles/ExpensePage.css";
 
 const ExpensePage = () => {

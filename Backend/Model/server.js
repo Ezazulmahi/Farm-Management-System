@@ -21,9 +21,8 @@ import locationRoutes from "./routes/locationRoutes.js";
 import weatherRoutes from "./routes/weatherRoutes.js";
 import farmRoutes from "./routes/farmRoutes.js";
 import bracSeedRoutes from "./routes/bracSeed.js";
-
-// ✅ Import notification routes
-import notificationsRoute from "./routes/notificationsRoute.js";
+import sadeeqAgroRoutes from "./routes/sadeeqAgroRoutes.js";
+//import notificationsRoute from "./routes/notificationsRoute.js";
 
 const uploadDir = path.resolve(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {
@@ -57,6 +56,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/location", locationRoutes);
 app.use("/api/weather", weatherRoutes);
 app.use("/api/farms", farmRoutes);
+app.use("/api/orders", adminOnlineListRoutes);
 
 // Test Routes
 app.get("/api/test", (req, res) => {
@@ -69,6 +69,7 @@ app.get("/api/welcome", (req, res) => {
   });
 });
 app.use("/api/bracseed", bracSeedRoutes);
+app.use("/api/sadeeqagro",sadeeqAgroRoutes)
 
 // Start server
 app.listen(PORT, () => {

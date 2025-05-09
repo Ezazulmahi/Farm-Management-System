@@ -60,7 +60,7 @@ const HomePage = () => {
         <div className="nav-icons">
           <img src="/images/cart.png" alt="Cart" onClick={() => navigate("/cart")} className="nav-icon" />
           <img src="/images/notification.png" alt="Notification" onClick={() => navigate("/notifications")} className="nav-icon" />
-          <img src="/images/profile.png" alt="Profile" onClick={() => navigate("/profile")} className="nav-icon" />
+          <img src="/images/profile.png" alt="Profile" onClick={() => navigate("/farm-profile")} className="nav-icon" />
           <img src="/images/logout.png" alt="Logout" onClick={handleLogout} className="nav-icon" />
         </div>
       </div>

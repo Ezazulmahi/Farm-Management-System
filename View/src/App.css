@@ -1,30 +1,34 @@
-/* Ensure the page can scroll vertically */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden; /* Prevent horizontal overflow */
+/* Global Reset */
+* {
+  box-sizing: border-box;
 }
 
-/* Root Element (Wraps entire App) */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Let body grow and scroll vertically */
+body {
+  min-height: 100vh;
+  overflow-y: auto;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom right, #e8f5e9, #f1f8e9);
+}
+
+/* Root container setup */
 #root {
-  height: 100%;  /* Ensure #root takes full height of the viewport */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* To ensure any page can grow and be scrollable */
+/* Page container wrapper */
 .page-container {
   flex-grow: 1;
-  overflow-y: auto; /* Enable scrolling if content exceeds the view */
-}
-
-/* Example background */
-body {
-  background: linear-gradient(to bottom right, #e8f5e9, #f1f8e9); /* Example gradient background */
-}
-
-/* Universal box-sizing */
-* {
-  box-sizing: border-box;
+  padding: 20px;
+  overflow-y: auto;
 }
