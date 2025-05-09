@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/CattleRanch.css"; // Use a different CSS file for the reddish theme
 
-const Cattle= () => {
+const Cattle = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState(() => JSON.parse(localStorage.getItem("cartItems")) || []);
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const Cattle= () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/cattleranch"); // Update API route for Cattle Ranch
+        const response = await fetch("http://localhost:5000/api/cattleranch");
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -32,10 +32,36 @@ const Cattle= () => {
         <img src="/images/Cattle.jpeg" alt="Cattle Ranch Logo" />
         <h2>Cattle Ranch</h2>
         <div className="nav-icons">
-          <img src="/images/home.png" onClick={() => navigate("/home")} className="nav-icon" />
-          <img src="/images/cart.png" onClick={() => navigate("/cart", { state: { cartItems: cart } })} className="nav-icon" />
-          <img src="/images/notification.png" onClick={() => navigate("/notifications")} className="nav-icon" />
-          <img src="/images/profile.png" onClick={() => navigate("/profile")} className="nav-icon" />
+          <img
+            src="/images/home.png"
+            onClick={() => navigate("/home")}
+            className="nav-icon"
+            alt="Home"
+          />
+          <img
+            src="/images/cart.png"
+            onClick={() => navigate("/cart", { state: { cartItems: cart } })}
+            className="nav-icon"
+            alt="Cart"
+          />
+          <img
+            src="/images/notification.png"
+            onClick={() => navigate("/notifications")}
+            className="nav-icon"
+            alt="Notifications"
+          />
+          <img
+            src="/images/profile.png"
+            onClick={() => navigate("/profile")}
+            className="nav-icon"
+            alt="Profile"
+          />
+          <button
+            className="review-button"
+            onClick={() => navigate("/review")}
+          >
+            Product Review
+          </button>
         </div>
       </div>
 

@@ -32,10 +32,36 @@ const Sadeeq = () => {
         <img src="/images/Sadeeq.jpg" alt="Sadeeq Agro Logo" />
         <h2>Sadeeq Agro</h2>
         <div className="nav-icons">
-          <img src="/images/home.png" onClick={() => navigate("/home")} className="nav-icon" />
-          <img src="/images/cart.png" onClick={() => navigate("/cart", { state: { cartItems: cart } })} className="nav-icon" />
-          <img src="/images/notification.png" onClick={() => navigate("/notifications")} className="nav-icon" />
-          <img src="/images/profile.png" onClick={() => navigate("/profile")} className="nav-icon" />
+          <img
+            src="/images/home.png"
+            onClick={() => navigate("/home")}
+            className="nav-icon"
+            alt="Home"
+          />
+          <img
+            src="/images/cart.png"
+            onClick={() => navigate("/cart", { state: { cartItems: cart } })}
+            className="nav-icon"
+            alt="Cart"
+          />
+          <img
+            src="/images/notification.png"
+            onClick={() => navigate("/notifications")}
+            className="nav-icon"
+            alt="Notifications"
+          />
+          <img
+            src="/images/profile.png"
+            onClick={() => navigate("/profile")}
+            className="nav-icon"
+            alt="Profile"
+          />
+          <button
+            className="review-button"
+            onClick={() => navigate("/review")}
+          >
+            Product Review
+          </button>
         </div>
       </div>
 
