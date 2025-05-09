@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import DashboardCard from "../components/DashboardCard";
 import DashboardChart from "../components/DashboardChart";
 import { getDashboardData } from "../api/adminAPI";
-import { Package, AlertTriangle, ClipboardList, Wallet } from "lucide-react";
-import { ClipLoader } from "react-spinners";
-import Sidebar from "../components/Sidebar";
-import PropTypes from "prop-types";
-import "../styles/AdminDashboard.css";
+import {
+  Package,
+  AlertTriangle,
+  ClipboardList,
+  Wallet,
+} from "lucide-react";
+// import "../styles/AdminDashboard.css"; // Optional: for extra custom CSS if needed
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);

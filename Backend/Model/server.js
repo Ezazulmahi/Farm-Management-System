@@ -22,8 +22,6 @@ import weatherRoutes from "./routes/weatherRoutes.js";
 import farmRoutes from "./routes/farmRoutes.js";
 import bracSeedRoutes from "./routes/bracSeed.js";
 
-
-
 const uploadDir = path.resolve(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
@@ -72,3 +70,4 @@ app.use("/api/bracseed", bracSeedRoutes);
 app.listen(PORT, () => {
   console.log("🚀 Server running on http://localhost:" + PORT);
 });
+app.use("/api/orders", adminOnlineListRoutes);
