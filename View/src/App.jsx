@@ -24,6 +24,7 @@ import Soformali from './pages/Farms/Soformali';
 import Cattle from './pages/Farms/Cattle';
 import ReviewForm from './pages/ReviewForm';
 
+import ThankYou from './pages/ThankYou';
 import ProductPage from "./pages/ProductPage";
 import NotificationsPage from './pages/NotificationsPage';
 
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="soformali" element={<Soformali />} />
         <Route path="sadeeq-agro" element={<Sadeeq />} />
 
+        <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/" element={<Startpage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />

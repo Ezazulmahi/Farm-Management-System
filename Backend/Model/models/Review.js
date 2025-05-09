@@ -1,12 +1,19 @@
-// models/Review.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const reviewSchema = new mongoose.Schema(
-  {
-    text: { type: String, required: true },
-    rating: { type: Number, required: true, min: 1, max: 5 },
+const reviewSchema = new mongoose.Schema({
+  text: {
+    type: String,
+    required: true,
   },
-  { timestamps: true }
-);
+  ratings: {
+    type: [Number],
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-module.exports = mongoose.model('Review', reviewSchema);
+const Review = mongoose.model("Review", reviewSchema);
+export default Review;

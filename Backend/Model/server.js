@@ -57,6 +57,8 @@ import taskRoutes from "./routes/taskRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
+import reviewRoutes from "./Routes/reviewRoutes.js";
+// import notificationRoutes from "./routes/notificationRoutes.js";
 
 app.use("/api/users", userRoutes);
 app.use("/api/profile", profileRoutes);
@@ -71,6 +73,8 @@ app.use("/api/sadeeqagro", sadeeqAgroRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/sadeeqagro", sadeeqAgroRoutes);
+app.use("/api/reviews", reviewRoutes);
+// app.use("/api/notifications", notificationRoutes);
 
 // Test Routes
 app.get("/api/test", (req, res) => {

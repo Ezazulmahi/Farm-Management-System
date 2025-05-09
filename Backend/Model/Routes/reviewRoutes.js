@@ -1,9 +1,10 @@
-// routes/reviewRoutes.js
-const express = require('express');
+// Routes/reviewRoutes.js
+import express from 'express';
+import reviewController from '../../controllers/reviewController.js';
+
 const router = express.Router();
-const reviewController = require('../../controllers/reviewController');
 
 router.get('/', reviewController.getReviews);
 router.post('/', reviewController.createReview);
 
-module.exports = router;
+export default router;
