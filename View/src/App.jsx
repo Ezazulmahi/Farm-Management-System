@@ -19,7 +19,7 @@ import Weather from "./pages/WeatherPage";
 import Bracseed from "./pages/Farms/BracSeed";
 import AdminFarmPanel from "./pages/AdminFarmPanel";
 import LocationTracking from "./pages/LocationTracking";
-import Sadeeq  from './pages/Farms/Sadeeq';
+import Sadeeq from './pages/Farms/Sadeeq';
 import Soformali from './pages/Farms/Soformali';
 import Cattle from './pages/Farms/Cattle';
 import ReviewForm from './pages/ReviewForm';
@@ -27,14 +27,14 @@ import ReviewForm from './pages/ReviewForm';
 import ProductPage from "./pages/ProductPage";
 import NotificationsPage from './pages/NotificationsPage';
 
-// No replacement needed; simply remove the conflict marker.
 const App = () => {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
-        <Route path="cattle-ranch" element={<Cattle/>}/>
-        <Route path="soformali" element={<Soformali/>}/>
-        <Route path="sadeeq-agro" element={<Sadeeq/>}/>
+        <Route path="cattle-ranch" element={<Cattle />} />
+        <Route path="soformali" element={<Soformali />} />
+        <Route path="sadeeq-agro" element={<Sadeeq />} />
+
         <Route path="/" element={<Startpage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />

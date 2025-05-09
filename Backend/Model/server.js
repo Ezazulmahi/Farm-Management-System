@@ -17,16 +17,16 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Ensure Upload Directory Exists
+// Ensure Uploads Directory Exists
 const uploadDir = path.resolve(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
+app.use("/uploads", express.static(uploadDir));
 
 // Middleware
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
-app.use("/uploads", express.static(uploadDir));
 
 // MongoDB Connection
 const connectDB = async () => {
@@ -70,6 +70,7 @@ app.use("/api/bracseed", bracSeedRoutes);
 app.use("/api/sadeeqagro", sadeeqAgroRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/expenses", expenseRoutes);
+app.use("/api/sadeeqagro", sadeeqAgroRoutes);
 
 // Test Routes
 app.get("/api/test", (req, res) => {
