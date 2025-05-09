@@ -1,31 +1,25 @@
-/* Ensure the admin panel can scroll when content overflows */
 .admin-farm-panel {
   padding: 30px;
-  max-width: 800px;
-  margin: auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
   font-family: Arial, sans-serif;
   background-color: #80b3e6;
   border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-  min-height: 100vh; /* Ensure the panel can expand to full screen height */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
-/* Title */
-.admin-farm-panel h2 {
-  text-align: center;
-  color: #2d2d2d;
-  margin-bottom: 20px;
-}
-
-/* Form layout */
+/* Form styles */
 .farm-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 20px; /* Add space for scrollability */
+  margin-bottom: 20px;
 }
 
 .farm-form input,
@@ -52,22 +46,39 @@
   margin-top: 10px;
 }
 
-/* Farm cards */
+/* Horizontal scrollable farm list */
 .farm-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  display: flex;
+  flex-direction: row;
   gap: 20px;
-  margin-top: 30px;
-  overflow-y: auto; /* Ensure the list of farms can scroll if needed */
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 10px 0;
+  white-space: nowrap;
 }
 
+/* Style scrollbar (optional) */
+.farm-list::-webkit-scrollbar {
+  height: 8px;
+}
+.farm-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.farm-list::-webkit-scrollbar-track {
+  background: #eee;
+}
+
+/* Each farm card */
 .farm-card {
+  flex: 0 0 auto;
+  width: 200px;
   background-color: #fff;
   border: 1px solid #ccc;
   padding: 15px;
   border-radius: 8px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .farm-card img {
@@ -86,17 +97,16 @@
   cursor: pointer;
 }
 
-/* Ensure scroll behavior works for the whole page */
+/* Ensure full height and no horizontal cut-off */
 html, body {
-  height: 100%;
   margin: 0;
   padding: 0;
+  height: 100%;
   overflow-x: hidden;
 }
 
 #root {
-  min-height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
-

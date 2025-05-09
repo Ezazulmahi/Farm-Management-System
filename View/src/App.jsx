@@ -8,9 +8,8 @@ import AboutPage from "./pages/AboutPage";
 import HomePage from "./pages/HomePage";
 import FarmProfile from "./pages/FarmProfile";
 import Cart from "./pages/Cart";
-import Notification from "./pages/Notification";
+import Notification from "./pages/NotificationsPage";
 import Payment from "./pages/Payment";
-import LocationTracking from "./pages/LocationTracking";
 import Dashboard from "./pages/AdminDashboard";
 import InventoryPage from "./pages/InventoryPage";
 import TaskPage from "./pages/TaskPage";
@@ -19,12 +18,23 @@ import Post from "./pages/Adminpost";
 import Weather from "./pages/WeatherPage";
 import Bracseed from "./pages/Farms/BracSeed";
 import AdminFarmPanel from "./pages/AdminFarmPanel";
-import ProductPage from "./pages/ProductPage";
+import LocationTracking from "./pages/LocationTracking";
+import Sadeeq  from './pages/Farms/Sadeeq';
+import Soformali from './pages/Farms/Soformali';
+import Cattle from './pages/Farms/Cattle';
+import ReviewForm from './pages/ReviewForm';
 
+import ProductPage from "./pages/ProductPage";
+import NotificationsPage from './pages/NotificationsPage';
+
+// No replacement needed; simply remove the conflict marker.
 const App = () => {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
+        <Route path="cattle-ranch" element={<Cattle/>}/>
+        <Route path="soformali" element={<Soformali/>}/>
+        <Route path="sadeeq-agro" element={<Sadeeq/>}/>
         <Route path="/" element={<Startpage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
@@ -37,15 +47,17 @@ const App = () => {
         <Route path="/weather" element={<Weather />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/notifications" element={<Notification />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/inventory" element={<InventoryPage />} />
         <Route path="/tasks" element={<TaskPage />} />
         <Route path="/admin/expenses" element={<ExpensePage />} />
+        <Route path="/track" element={<LocationTracking />} />
         <Route path="/tracking" element={<LocationTracking />} />
         <Route path="/admin" element={<AdminFarmPanel />} />
         <Route path="/admin/farm" element={<AdminFarmPanel />} />
         <Route path="/products" element={<ProductPage />} />
+        <Route path="/review" element={<ReviewForm />} />
         <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>
     </Router>

@@ -2,10 +2,20 @@
 html, body, #root {
   margin: 0;
   padding: 0;
+  height: 100%;
+  width: 100%;
   overflow-x: hidden;
 }
 
-/* Root Element (Wraps entire App) */
+/* Let body grow and scroll vertically */
+body {
+  min-height: 100vh;
+  overflow-y: auto;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom right, #e8f5e9, #f1f8e9);
+}
+
+/* Root container setup */
 #root {
   display: flex;
   flex-direction: row; /* Sidebar and main content side by side */
@@ -13,7 +23,7 @@ html, body, #root {
   width: 100vw; /* Ensure it takes full viewport width */
 }
 
-/* To ensure any page can grow and be scrollable */
+/* Page container wrapper */
 .page-container {
   flex-grow: 1;
   display: flex;
