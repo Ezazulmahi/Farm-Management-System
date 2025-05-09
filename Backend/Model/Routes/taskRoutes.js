@@ -1,12 +1,14 @@
-// backend/routes/taskRoutes.js
-import express from "express";
+// routes/taskRoutes.js
+import express from 'express';
+// ✅ Correct (go up 2 levels from Model/routes/ to backend/controllers/)
+import { getTasks, createTask, updateTask, deleteTask } from "../../controllers/taskController.js";
+
+
 const router = express.Router();
-import { getAllTasks, createTask, updateTask, deleteTask } from "../controllers/TaskController.js";  // ES Module import
 
-// Define routes
-router.get("/", getAllTasks);          // GET /api/tasks
-router.post("/", createTask);          // POST /api/tasks
-router.put("/:id", updateTask);        // PUT /api/tasks/:id
-router.delete("/:id", deleteTask);     // DELETE /api/tasks/:id
+router.get('/', getTasks);
+router.post('/', createTask);
+router.put('/:id', updateTask);
+router.delete('/:id', deleteTask);
 
-export default router;  // Export router as default
+export default router;

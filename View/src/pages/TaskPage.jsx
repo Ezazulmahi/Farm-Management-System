@@ -1,170 +1,296 @@
-import React, { useEffect, useState } from "react";
-import {
-  fetchTasks,
-  createTask,
-  updateTask,
-  deleteTask,
-} from "../api/taskAPI";
+import React, { useEffect, useState, useMemo } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import debounce from "lodash.debounce";
+import Sidebar from "../components/Sidebar";
+import TaskCard from "../components/TaskCard";
+import TaskForm from "../components/TaskForm";
+import { fetchTasks, createTask, updateTask, deleteTask } from "../api/taskAPI";
+
+class ErrorBoundary extends React.Component {
+  state = { hasError: false, error: null };
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="error-message">
+          <p>Error: {this.state.error?.message || "Something went wrong"}</p>
+          <button onClick={() => window.location.reload()}>Refresh</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const TaskPage = () => {
   const [tasks, setTasks] = useState([]);
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    assignedTo: "",
-    dueDate: "",
-  });
   const [filter, setFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("dueDate");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [loading, setLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 5;
+
+  const debouncedSearch = useMemo(
+    () => debounce((value) => {
+      setSearchQuery(value);
+      setCurrentPage(1);
+    }, 300),
+    []
+  );
+
+  const handleSearchChange = (e) => {
+    debouncedSearch(e.target.value);
+  };
 
   const loadTasks = async () => {
-    const data = await fetchTasks();
-    setTasks(data);
+    try {
+      setLoading(true);
+      const data = await fetchTasks();
+      setTasks(data);
+      setError("");
+    } catch (err) {
+      const message = err.message || "Failed to load tasks. Please try again.";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     loadTasks();
+    return () => {
+      debouncedSearch.cancel();
+    };
   }, []);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleAddTask = async (form) => {
+    try {
+      setActionLoading(true);
+      await createTask(form);
+      toast.success("Task added successfully!");
+      loadTasks();
+    } catch {
+      toast.error("Failed to add task.");
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await createTask(form);
-    setForm({ title: "", description: "", assignedTo: "", dueDate: "" });
-    loadTasks();
+  const handleComplete = async (taskId) => {
+    try {
+      setActionLoading(true);
+      const task = tasks.find((t) => t._id === taskId);
+      if (!task) throw new Error("Task not found");
+      await updateTask(taskId, { ...task, status: "Completed" });
+      toast.success("Task marked as completed!");
+      loadTasks();
+    } catch {
+      toast.error("Failed to complete task.");
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  const handleComplete = async (task) => {
-    await updateTask(task._id, { ...task, status: "Completed" });
-    loadTasks();
+  const handleDelete = async (taskId) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      try {
+        setActionLoading(true);
+        await deleteTask(taskId);
+        toast.success("Task deleted successfully!");
+        loadTasks();
+      } catch {
+        toast.error("Failed to delete task.");
+      } finally {
+        setActionLoading(false);
+      }
+    }
   };
 
-  const handleDelete = async (id) => {
-    await deleteTask(id);
-    loadTasks();
+  const filteredTasks = useMemo(() => {
+    const result = tasks.filter(
+      (t) =>
+        t &&
+        (filter === "All" ? true : t.status === filter) &&
+        (t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (t.description || "").toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+    result.sort((a, b) => {
+      let valueA, valueB;
+      if (sortBy === "dueDate") {
+        valueA = new Date(a.dueDate).getTime();
+        valueB = new Date(b.dueDate).getTime();
+      } else if (sortBy === "title") {
+        valueA = a.title.toLowerCase();
+        valueB = b.title.toLowerCase();
+      } else if (sortBy === "status") {
+        valueA = a.status;
+        valueB = b.status;
+      }
+      if (sortOrder === "asc") {
+        return valueA > valueB ? 1 : -1;
+      } else {
+        return valueA < valueB ? 1 : -1;
+      }
+    });
+    return result;
+  }, [tasks, filter, searchQuery, sortBy, sortOrder]);
+
+  const paginatedTasks = useMemo(() => {
+    const startIndex = (currentPage - 1) * tasksPerPage;
+    return filteredTasks.slice(startIndex, startIndex + tasksPerPage).filter((task) => task);
+  }, [filteredTasks, currentPage]);
+
+  const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
   };
 
-  const isOverdue = (task) => {
-    return task.status !== "Completed" && new Date(task.dueDate) < new Date();
+  const handleLogout = () => {
+    localStorage.removeItem("userId");
+    window.location.href = "/login";
   };
-
-  const filteredTasks = tasks.filter((t) =>
-    filter === "All" ? true : t.status === filter
-  );
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Task Management</h2>
+    <div className="app-container">
+      <Sidebar handleLogout={handleLogout} />
+      <main className="main-content">
+        <div className="content-container">
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
+          <h2>Task Management</h2>
 
-      {/* Filter Dropdown */}
-      <div className="mb-4">
-        <label className="mr-2 font-medium">Filter:</label>
-        <select
-          className="border rounded px-2 py-1"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        >
-          <option value="All">All</option>
-          <option value="Pending">Pending</option>
-          <option value="Completed">Completed</option>
-        </select>
-      </div>
-
-      {/* Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white shadow-md rounded-2xl p-4 mb-6"
-      >
-        <input
-          name="title"
-          placeholder="Task Title"
-          value={form.title}
-          onChange={handleChange}
-          className="p-2 border rounded"
-          required
-        />
-        <input
-          name="assignedTo"
-          placeholder="Assign To"
-          value={form.assignedTo}
-          onChange={handleChange}
-          className="p-2 border rounded"
-          required
-        />
-        <input
-          type="date"
-          name="dueDate"
-          value={form.dueDate}
-          onChange={handleChange}
-          className="p-2 border rounded"
-          required
-        />
-        <input
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          className="p-2 border rounded col-span-1 md:col-span-2"
-        />
-        <button
-          type="submit"
-          className="bg-green-600 text-white py-2 rounded col-span-1 md:col-span-2"
-        >
-          Add Task
-        </button>
-      </form>
-
-      {/* Task List */}
-      <div className="grid gap-4">
-        {filteredTasks.length === 0 ? (
-          <p className="text-gray-500">No tasks to display.</p>
-        ) : (
-          filteredTasks.map((task) => (
-            <div
-              key={task._id}
-              className={`bg-white shadow rounded-lg p-4 flex flex-col md:flex-row justify-between items-start md:items-center border-2 ${
-                isOverdue(task) ? "border-red-500" : "border-transparent"
-              }`}
-            >
-              <div>
-                <h4 className="font-semibold text-lg">{task.title}</h4>
-                <p className="text-sm text-gray-600">{task.description}</p>
-                <p className="text-sm">
-                  👤 {task.assignedTo} | 📅{" "}
-                  {new Date(task.dueDate).toLocaleDateString()}
-                </p>
-                <span
-                  className={`inline-block px-3 py-1 text-sm rounded-full font-medium mt-1 ${
-                    task.status === "Completed"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
-                  }`}
-                >
-                  {task.status}
-                </span>
-              </div>
-              <div className="flex gap-2 mt-4 md:mt-0">
-                {task.status !== "Completed" && (
-                  <button
-                    onClick={() => handleComplete(task)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded"
-                  >
-                    Complete
-                  </button>
-                )}
-                <button
-                  onClick={() => handleDelete(task._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
-                >
-                  Delete
-                </button>
-              </div>
+          <div className="filters">
+            <div className="filter-group">
+              <label>Filter:</label>
+              <select
+                value={filter}
+                onChange={(e) => {
+                  setFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+              </select>
             </div>
-          ))
-        )}
-      </div>
+
+            <div className="filter-group">
+              <label>Search:</label>
+              <input
+                type="text"
+                placeholder="Search tasks..."
+                onChange={handleSearchChange}
+              />
+            </div>
+
+            <div className="filter-group">
+              <label>Sort By:</label>
+              <select
+                value={sortBy}
+                onChange={(e) => {
+                  setSortBy(e.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="dueDate">Due Date</option>
+                <option value="title">Title</option>
+                <option value="status">Status</option>
+              </select>
+              <select
+                value={sortOrder}
+                onChange={(e) => {
+                  setSortOrder(e.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+            </div>
+          </div>
+
+          <p className="task-count">
+            Showing {paginatedTasks.length} of {filteredTasks.length} tasks (Total: {tasks.length})
+          </p>
+
+          <TaskForm onSubmit={handleAddTask} disabled={actionLoading} />
+
+          {loading ? (
+            <p>Loading tasks...</p>
+          ) : error ? (
+            <div className="error-message">
+              <p>{error}</p>
+              <button onClick={loadTasks}>Retry</button>
+            </div>
+          ) : paginatedTasks.length === 0 ? (
+            <p>No tasks to display. Add one above!</p>
+          ) : (
+            <div className="task-list">
+              <ErrorBoundary>
+                {paginatedTasks.map((task) => (
+                  <TaskCard
+                    key={task._id}
+                    task={task}
+                    onComplete={() => handleComplete(task._id)}
+                    onDelete={() => handleDelete(task._id)}
+                    disabled={actionLoading}
+                  />
+                ))}
+              </ErrorBoundary>
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || actionLoading}
+              >
+                Previous
+              </button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages || actionLoading}
+              >
+                Next
+              </button>
+              <select
+                value={currentPage}
+                onChange={(e) => handlePageChange(Number(e.target.value))}
+                disabled={actionLoading}
+              >
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <option key={page} value={page}>
+                    Page {page}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 };

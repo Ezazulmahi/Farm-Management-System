@@ -1,42 +1,22 @@
-const Task = require("../models/Task");
+import Task from "../Model/models/taskModel.js";
 
-// Get all tasks
-export const getAllTasks = async (req, res) => {
-  try {
-    const tasks = await Task.find().sort({ dueDate: 1 });
-    res.json(tasks);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch tasks" });
-  }
+export const getTasks = async (req, res) => {
+  const tasks = await Task.find();
+  res.json(tasks);
 };
 
-// Create task
 export const createTask = async (req, res) => {
-  try {
-    const newTask = new Task(req.body);
-    const saved = await newTask.save();
-    res.status(201).json(saved);
-  } catch (err) {
-    res.status(400).json({ error: "Failed to create task" });
-  }
+  const task = new Task(req.body);
+  await task.save();
+  res.status(201).json(task);
 };
 
-// Update task
 export const updateTask = async (req, res) => {
-  try {
-    const updated = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(updated);
-  } catch (err) {
-    res.status(400).json({ error: "Failed to update task" });
-  }
+  const updated = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  res.json(updated);
 };
 
-// Delete task
 export const deleteTask = async (req, res) => {
-  try {
-    await Task.findByIdAndDelete(req.params.id);
-    res.json({ message: "Task deleted" });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to delete task" });
-  }
+  await Task.findByIdAndDelete(req.params.id);
+  res.json({ message: 'Task deleted' });
 };

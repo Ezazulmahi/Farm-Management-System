@@ -1,181 +1,130 @@
-// src/pages/ProductPage.jsx
 import React, { useState, useEffect } from "react";
-import {
-  fetchProducts,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-} from "../api/productAPI";
+import PropTypes from "prop-types";
+import { fetchProducts, createProduct } from "../api/productAPI";
+import { debounce } from "lodash";
+import Sidebar from "../components/Sidebar";
+import SearchBar from "../components/SearchBar";
+import ProductTable from "../components/ProductTable";
+import Pagination from "../components/Pagination";
+import ProductForm from "../components/ProductForm";
+import { toast } from "react-toastify";
+import "../styles/ProductPage.css";
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    price: "",
-    quantity: "",
-    category: "",
-  });
-  const [editId, setEditId] = useState(null);
-  const [error, setError] = useState(null);  // For error handling
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState("name");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [search, sortKey, currentPage]);
 
   const loadProducts = async () => {
+    setLoading(true);
     try {
-      const data = await fetchProducts();
-      setProducts(data);
-    } catch (err) {
-      setError("Failed to load products.");
-    }
-  };
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editId) {
-        await updateProduct(editId, form);
-      } else {
-        await createProduct(form);
-      }
-      setForm({
-        name: "",
-        description: "",
-        price: "",
-        quantity: "",
-        category: "",
+      const { data, total } = await fetchProducts({
+        search,
+        sort: sortKey,
+        page: currentPage,
+        limit: itemsPerPage,
       });
-      setEditId(null);
-      loadProducts();
+      setProducts(data);
+      setTotalCount(total);
     } catch (err) {
-      setError("Failed to save product.");
+      const message = "Failed to load products.";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleEdit = (product) => {
-    setForm({
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      quantity: product.quantity,
-      category: product.category,
-    });
-    setEditId(product._id);
-  };
-
-  const handleDelete = async (id) => {
+  const handleCreate = async (data) => {
+    setLoading(true);
     try {
-      await deleteProduct(id);
+      await createProduct(data);
+      toast.success("Product created successfully!");
       loadProducts();
     } catch (err) {
-      setError("Failed to delete product.");
+      const message = err.message || "Failed to create product.";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handleSearch = debounce((value) => {
+    setSearch(value);
+    setCurrentPage(1);
+  }, 300);
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Product Management</h2>
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <div className="main-content">
+        <h1>Product Management</h1>
+        {error && (
+          <div className="error-message" role="alert">
+            <span>{error}</span>
+            <button onClick={() => setError(null)} aria-label="Dismiss error">
+              &times;
+            </button>
+          </div>
+        )}
 
-      {/* Error Handling */}
-      {error && <div className="text-red-600 mb-4">{error}</div>}
+        {/* Add Product Form */}
+        <div className="form-container">
+          <h2>Add Product</h2>
+          <ProductForm
+            onSubmit={handleCreate}
+            submitText="Add Product"
+            loading={loading}
+          />
+        </div>
 
-      {/* Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded-xl shadow mb-6"
-      >
-        <input
-          name="name"
-          placeholder="Product Name"
-          value={form.name}
-          onChange={handleChange}
-          className="p-2 border rounded"
-          required
-        />
-        <input
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          className="p-2 border rounded"
-        />
-        <input
-          name="quantity"
-          type="number"
-          placeholder="Quantity"
-          value={form.quantity}
-          onChange={handleChange}
-          className="p-2 border rounded"
-          required
-        />
-        <input
-          name="category"
-          placeholder="Category (e.g. Vegetables)"
-          value={form.category}
-          onChange={handleChange}
-          className="p-2 border rounded"
-        />
-        <input
-          name="price"
-          type="number"
-          placeholder="Price (₹)"
-          value={form.price}
-          onChange={handleChange}
-          className="p-2 border rounded"
-        />
+        {/* Search and Sort Controls */}
+        <div className="search-sort-container">
+          <SearchBar onSearch={handleSearch} />
+          <select
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value)}
+            aria-label="Sort products"
+          >
+            <option value="name">Sort by Name</option>
+            <option value="price">Sort by Price</option>
+            <option value="quantity">Sort by Quantity</option>
+          </select>
+        </div>
 
-        <button
-          type="submit"
-          className="bg-green-600 text-white py-2 rounded col-span-1 md:col-span-2"
-        >
-          {editId ? "Update Product" : "Add Product"}
-        </button>
-      </form>
-
-      {/* Product List */}
-      <div className="grid gap-4">
-        {products.length === 0 ? (
-          <p className="text-gray-500">No products available.</p>
+        {/* Product List and Pagination */}
+        {loading ? (
+          <div className="loading" aria-live="polite">
+            Loading products...
+          </div>
         ) : (
-          products.map((prod) => (
-            <div
-              key={prod._id}
-              className="bg-white p-4 shadow rounded-xl flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-semibold text-lg">{prod.name}</h3>
-                <p className="text-sm text-gray-600">{prod.description}</p>
-                <p className="text-sm text-gray-500">
-                  {prod.quantity} pcs – ₹{prod.price || 0}
-                </p>
-                <p className="text-xs text-gray-400">Category: {prod.category}</p>
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => handleEdit(prod)}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(prod._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
+          <>
+            <ProductTable products={products} onRefresh={loadProducts} />
+            <Pagination
+              total={totalCount}
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+            />
+          </>
         )}
       </div>
     </div>
   );
+};
+
+ProductPage.propTypes = {
+  // No props currently, but added for future extensibility
 };
 
 export default ProductPage;

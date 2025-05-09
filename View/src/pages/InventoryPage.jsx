@@ -1,108 +1,91 @@
 // pages/InventoryPage.jsx
-import React, { useEffect, useState } from "react";
-import { fetchProducts, updateProduct } from "../api/productAPI";
+import React, { useState, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import fetchProducts from "../api/fetchProducts"; // Assuming this is your API call function
+import Sidebar from "../components/Sidebar"; // Import the Sidebar component
+import "../styles/InventoryPage.css";
 
 const InventoryPage = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]); // Ensure products is initialized as an array
   const [loading, setLoading] = useState(true);
-  const [editingId, setEditingId] = useState(null);
-  const [restockQty, setRestockQty] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = searchTerm.trim().toLowerCase();
 
   useEffect(() => {
     const loadData = async () => {
-      const data = await fetchProducts();
-      setProducts(data);
-      setLoading(false);
+      try {
+        const data = await fetchProducts();
+        if (Array.isArray(data)) {
+          setProducts(data); // Set products only if it's an array
+        } else {
+          console.error("Expected an array but got:", data);
+          setProducts([]); // Fallback to an empty array
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        toast.error("Error loading inventory. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     };
     loadData();
   }, []);
 
-  const handleRestock = async (id) => {
-    const product = products.find((p) => p._id === id);
-    const updated = {
-      ...product,
-      quantity: product.quantity + parseInt(restockQty),
-    };
-    await updateProduct(id, updated);
-    setRestockQty("");
-    setEditingId(null);
+  const filteredProducts = Array.isArray(products)
+    ? products.filter((product) =>
+        product.name.toLowerCase().includes(debouncedSearchTerm)
+      )
+    : [];
 
-    // reload list
-    const updatedData = await fetchProducts();
-    setProducts(updatedData);
-  };
-
-  if (loading) return <div className="p-4">Loading inventory...</div>;
+  if (loading) {
+    return (
+      <div className="p-4 flex justify-center items-center">
+        <div className="loader"></div>
+        <span className="loader-message">Loading inventory...</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Inventory Management</h2>
+    <div className="flex">
+      <Sidebar /> {/* Render the Sidebar component */}
+      <div className="p-4 flex-1">
+        <ToastContainer />
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Inventory Management</h2>
 
-      <table className="w-full border text-left text-sm">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-2 border">Product</th>
-            <th className="p-2 border">Quantity</th>
-            <th className="p-2 border">Status</th>
-            <th className="p-2 border">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((p) => (
-            <tr key={p._id}>
-              <td className="p-2 border">{p.name}</td>
-              <td className="p-2 border">{p.quantity}</td>
-              <td className="p-2 border">
-                {p.quantity < 5 ? (
-                  <span className="text-red-600 font-semibold">Low Stock</span>
-                ) : (
-                  <span className="text-green-600">OK</span>
-                )}
-              </td>
-              <td className="p-2 border">
-                {editingId === p._id ? (
-                  <div className="flex gap-2">
-                    <input
-                      type="number"
-                      min="1"
-                      className="border p-1 w-20"
-                      placeholder="Qty"
-                      value={restockQty}
-                      onChange={(e) => setRestockQty(e.target.value)}
-                    />
-                    <button
-                      onClick={() => handleRestock(p._id)}
-                      className="bg-blue-600 text-white px-2 py-1 rounded"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditingId(null)}
-                      className="bg-gray-400 text-white px-2 py-1 rounded"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setEditingId(p._id)}
-                    className="text-blue-600"
-                  >
-                    Restock
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-          {products.length === 0 && (
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search products..."
+            className="border p-2 w-full"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <table className="w-full border text-left text-sm">
+          <thead className="bg-gray-100">
             <tr>
-              <td colSpan="4" className="text-center p-4 text-gray-500">
-                No inventory data found.
-              </td>
+              <th className="p-2 border">Product</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredProducts.map((product) => (
+              <tr key={product.id}>
+                <td className="p-2 border">{product.name}</td>
+              </tr>
+            ))}
+            {filteredProducts.length === 0 && (
+              <tr>
+                <td colSpan="1" className="text-center p-4 text-gray-500">
+                  No inventory data found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

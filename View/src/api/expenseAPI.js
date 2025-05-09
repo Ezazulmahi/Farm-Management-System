@@ -1,51 +1,24 @@
-// api/expenseAPI.js
+// src/api/expenseAPI.js
 import axios from "axios";
 
-const API_URL = "/api/expenses";  // Adjust if you're using a custom endpoint
+const BASE_URL = "http://localhost:5000/api/expenses";
 
-// Get all expenses
-export const getExpenses = async () => {
-  try {
-    const response = await axios.get(API_URL);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching expenses:", error);
-    throw error;
-  }
+export const getExpenses = async (filter = {}) => {
+  const res = await axios.get(BASE_URL, { params: filter });
+  return res.data;
 };
 
-// Create a new expense
-export const createExpense = async (expenseData) => {
-  try {
-    const response = await axios.post(API_URL, expenseData);
-    return response.data;
-  } catch (error) {
-    console.error("Error creating expense:", error);
-    throw error;
-  }
+export const createExpense = async (expense) => {
+  const res = await axios.post(BASE_URL, expense);
+  return res.data;
 };
 
-// Delete an expense
+export const updateExpense = async (id, updated) => {
+  const res = await axios.put(`${BASE_URL}/${id}`, updated);
+  return res.data;
+};
+
 export const deleteExpense = async (id) => {
-  try {
-    const response = await axios.delete(`${API_URL}/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting expense:", error);
-    throw error;
-  }
+  const res = await axios.delete(`${BASE_URL}/${id}`);
+  return res.data;
 };
-
-// api/expenseAPI.js
-
-// Update an existing expense
-export const updateExpense = async (id, expenseData) => {
-    try {
-      const response = await axios.put(`${API_URL}/${id}`, expenseData);
-      return response.data;
-    } catch (error) {
-      console.error("Error updating expense:", error);
-      throw error;
-    }
-  };
-  

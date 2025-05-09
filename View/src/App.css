@@ -1,7 +1,4 @@
-/* Global Reset */
-* {
-  box-sizing: border-box;
-}
+
 
 html, body {
   margin: 0;
@@ -21,14 +18,33 @@ body {
 
 /* Root container setup */
 #root {
-  min-height: 100vh;
-  display: flex;
+
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* Page container wrapper */
 .page-container {
   flex-grow: 1;
-  padding: 20px;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Universal box-sizing */
+* {
+  box-sizing: border-box;
+}
+
+/* Example for a scrollable container */
+.scrollable-container {
+  max-height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .scrollable-container {
+    max-height: 80vh;
+  }
 }

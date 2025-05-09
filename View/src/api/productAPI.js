@@ -1,24 +1,41 @@
-// src/api/productAPI.js
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5000/api/products"; // Or use env variable for production
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000/api/products",
+});
 
-export const fetchProducts = async () => {
-  const res = await axios.get(BASE_URL);
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const message = error.response?.data?.message || "Something went wrong.";
+    return Promise.reject(new Error(message));
+  }
+);
+
+export const fetchProducts = async (params = {}) => {
+  const res = await api.get("", { params });
+  return {
+    data: res.data,
+    total: res.headers["x-total-count"] || res.data.length, // Adjust based on backend
+  };
+};
+
+export const fetchProductById = async (id) => {
+  const res = await api.get(`/${id}`);
   return res.data;
 };
 
-export const createProduct = async (data) => {
-  const res = await axios.post(BASE_URL, data);
+export const createProduct = async (product) => {
+  const res = await api.post("", product);
   return res.data;
 };
 
-export const updateProduct = async (id, data) => {
-  const res = await axios.put(`${BASE_URL}/${id}`, data);
+export const updateProduct = async (id, updates) => {
+  const res = await api.put(`/${id}`, updates);
   return res.data;
 };
 
 export const deleteProduct = async (id) => {
-  const res = await axios.delete(`${BASE_URL}/${id}`);
+  const res = await api.delete(`/${id}`);
   return res.data;
 };

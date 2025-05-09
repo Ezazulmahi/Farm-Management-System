@@ -1,74 +1,124 @@
-// src/components/ProductForm.jsx
-import React, { useState, useEffect } from "react";
-import { createProduct, updateProduct } from "../api/productAPI";  // Create these API functions
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
-const ProductForm = ({ product }) => {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [category, setCategory] = useState("");
+const schema = yup.object({
+  name: yup.string().required("Name is required").min(2, "Name must be at least 2 characters"),
+  price: yup
+    .number()
+    .required("Price is required")
+    .positive("Price must be positive")
+    .typeError("Price must be a number"),
+  quantity: yup
+    .number()
+    .required("Quantity is required")
+    .integer("Quantity must be an integer")
+    .min(0, "Quantity cannot be negative")
+    .typeError("Quantity must be a number"),
+  category: yup.string().required("Category is required"),
+});
+
+const ProductForm = ({ initialData, onSubmit, submitText = "Submit", loading = false }) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: initialData || {
+      name: "",
+      price: "",
+      quantity: "",
+      category: "",
+    },
+  });
 
   useEffect(() => {
-    if (product) {
-      setName(product.name);
-      setPrice(product.price);
-      setQuantity(product.quantity);
-      setCategory(product.category);
-    }
-  }, [product]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (product) {
-      updateProduct(product._id, { name, price, quantity, category });
-    } else {
-      createProduct({ name, price, quantity, category });
-    }
-  };
+    if (initialData) reset(initialData);
+  }, [initialData, reset]);
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6">
-      <div>
-        <label>Name</label>
+    <form onSubmit={handleSubmit(onSubmit)} aria-label={`${submitText} product form`}>
+      <div className="form-field">
+        <label htmlFor="name">Name</label>
         <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="block w-full p-2 border border-gray-300"
+          id="name"
+          {...register("name")}
+          aria-invalid={errors.name ? "true" : "false"}
         />
+        {errors.name && (
+          <p className="error" role="alert">
+            {errors.name.message}
+          </p>
+        )}
       </div>
-      <div>
-        <label>Price</label>
+      <div className="form-field">
+        <label htmlFor="price">Price</label>
         <input
+          id="price"
           type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className="block w-full p-2 border border-gray-300"
+          step="0.01"
+          {...register("price")}
+          aria-invalid={errors.price ? "true" : "false"}
         />
+        {errors.price && (
+          <p className="error" role="alert">
+            {errors.price.message}
+          </p>
+        )}
       </div>
-      <div>
-        <label>Quantity</label>
+      <div className="form-field">
+        <label htmlFor="quantity">Quantity</label>
         <input
+          id="quantity"
           type="number"
-          value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
-          className="block w-full p-2 border border-gray-300"
+          {...register("quantity")}
+          aria-invalid={errors.quantity ? "true" : "false"}
         />
+        {errors.quantity && (
+          <p className="error" role="alert">
+            {errors.quantity.message}
+          </p>
+        )}
       </div>
-      <div>
-        <label>Category</label>
+      <div className="form-field">
+        <label htmlFor="category">Category</label>
         <input
-          type="text"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="block w-full p-2 border border-gray-300"
+          id="category"
+          {...register("category")}
+          aria-invalid={errors.category ? "true" : "false"}
         />
+        {errors.category && (
+          <p className="error" role="alert">
+            {errors.category.message}
+          </p>
+        )}
       </div>
-      <button type="submit" className="mt-4 bg-blue-500 text-white p-2 rounded">
-        {product ? "Update Product" : "Add Product"}
+      <button
+        type="submit"
+        className="form-button"
+        disabled={loading}
+        aria-label={submitText}
+      >
+        {loading ? "Submitting..." : submitText}
       </button>
     </form>
   );
+};
+
+ProductForm.propTypes = {
+  initialData: PropTypes.shape({
+    name: PropTypes.string,
+    price: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    quantity: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    category: PropTypes.string,
+  }),
+  onSubmit: PropTypes.func.isRequired,
+  submitText: PropTypes.string,
+  loading: PropTypes.bool,
 };
 
 export default ProductForm;

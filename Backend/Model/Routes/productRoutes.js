@@ -1,14 +1,18 @@
-       
+// C:\Users\Asus\Farm-Management-System\Backend\Model\Routes\productRoutes.js
 
 import express from "express";
-import { getAllProducts, createProduct, updateProduct, deleteProduct } from "../controllers/productController.js";
+import {
+  getProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from "../../controllers/productController.js";  // fixed relative path
 
 const router = express.Router();
 
-router.get("/", getAllProducts); // GET /api/products
-router.post("/", createProduct); // POST /api/products
-router.delete("/:id", deleteProduct); // DELETE /api/products/:id
-router.put("/:id", updateProduct); // PUT /api/products/:id
+router.get("/", getProducts);
+router.post("/", createProduct);
+router.put("/:id", updateProduct);
+router.delete("/:id", deleteProduct);
 
 export default router;
-

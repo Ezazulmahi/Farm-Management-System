@@ -1,8 +1,12 @@
 {
   "name": "farm-management-system",
   "version": "1.0.0",
+  "description": "Farm Management System for managing farm activities effectively.",
   "main": "index.js",
   "scripts": {
+    "start": "node Backend/Model/server.js",
+    "dev": "nodemon Backend/Model/server.js",
+    "frontend": "vite",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,14 +20,15 @@
     "url": "https://github.com/Ezazulmahi/Farm-Management-System/issues"
   },
   "homepage": "https://github.com/Ezazulmahi/Farm-Management-System#readme",
-  "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.494.0",
+    "mongoose": "^7.8.7",
     "react-leaflet": "^5.0.0",
+    "react-spinners": "^0.17.0",
     "recharts": "^2.15.3"
-  },
-  "devDependencies": {
-    "vite": "^6.3.3"
   }
 }
