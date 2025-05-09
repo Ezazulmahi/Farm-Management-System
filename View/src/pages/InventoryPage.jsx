@@ -9,6 +9,7 @@ import SearchBar from "../components/SearchBar";
 import Pagination from "../components/Pagination";
 import "../styles/InventoryPage.css";
 
+
 const InventoryPage = () => {
   const [products, setProducts] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
