@@ -5,7 +5,8 @@ import {
   deleteExpense,
   updateExpense,
 } from "../api/expenseAPI";
-import AdminNavbar from "../components/AdminNavbar";
+import Sidebar from "../components/Sidebar";
+import ExpenseCard from "../components/ExpenseCard";
 import "../styles/ExpensePage.css";
 
 const FilterSection = ({ filter, onFilterChange, onApply, onClear, onSortChange, sort }) => (
