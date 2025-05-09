@@ -23,6 +23,15 @@ const Sidebar = ({ handleLogout, className }) => {
   }, []);
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsOpen(window.innerWidth > 768);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Initial check
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
     document.body.classList.toggle("dark-theme", darkMode);
   }, [darkMode]);
@@ -41,7 +50,7 @@ const Sidebar = ({ handleLogout, className }) => {
 
   return (
     <motion.aside
-      animate={{ x: isOpen ? 0 : -280 }}
+      animate={{ x: isOpen ? 0 : -300 }} /* Matches the sidebar width */
       transition={{ type: "spring", stiffness: 100 }}
       className={classNames("sidebar", { "dark-mode": darkMode, open: isOpen }, className)}
     >

@@ -64,6 +64,10 @@ body.dark-mode {
   min-height: 100vh;
   position: relative;
   z-index: 10;
+  margin-left: var(--sidebar-width); /* Added to prevent Sidebar overlap */
+  width: calc(100% - var(--sidebar-width)); /* Ensure content fits beside Sidebar */
+  overflow-y: auto; /* Enable scrolling for content */
+  max-height: 100vh; /* Limit height to viewport */
 }
 
 body.dark-mode .main-content {
@@ -79,6 +83,7 @@ body.dark-mode .main-content {
   border-radius: var(--radius);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   transition: background var(--transition);
+  min-height: calc(100vh - 3rem); /* Ensure full height minus margins */
 }
 
 body.dark-mode .expense-page {
@@ -132,11 +137,11 @@ body.dark-mode .loading-spinner {
   color: #9ca3af;
 }
 
-/* Filter Section */
+/* Filter Section (Consolidated, removed duplicate) */
 .filter-section {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-bottom: var(--spacing);
   align-items: center;
   background: #f9fafb;
@@ -151,7 +156,7 @@ body.dark-mode .filter-section {
 .filter-section select,
 .filter-section input[type="date"] {
   flex: 1;
-  min-width: 150px;
+  min-width: 120px; /* Reduced for better mobile fit */
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
@@ -202,7 +207,10 @@ body.dark-mode .filter-section input[type="date"] {
 
 /* Export Button */
 .export-section {
-  text-align: right;
+  display: flex; /* Changed to flex for better alignment */
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem; /* Space between button and total */
   margin-bottom: var(--spacing);
 }
 
@@ -264,7 +272,7 @@ body.dark-mode .expense-form textarea {
 .expense-form textarea {
   resize: vertical;
   min-height: 100px;
-  grid-column: span 2;
+  grid-column: span 2; /* Ensure textarea spans on larger screens */
 }
 
 .expense-form select:focus,
@@ -301,7 +309,7 @@ body.dark-mode .expense-form textarea {
 /* Expense List */
 .expense-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adjusted for better sizing */
   gap: var(--spacing);
 }
 
@@ -315,6 +323,7 @@ body.dark-mode .expense-form textarea {
   flex-direction: column;
   justify-content: space-between;
   transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+  min-height: 200px; /* Ensure consistent card height */
 }
 
 .expense-card:hover {
@@ -398,13 +407,60 @@ body.dark-mode .expense-info .date {
 .empty-state {
   text-align: center;
   color: #6b7280;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-style: italic;
   padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 body.dark-mode .empty-state {
   color: #9ca3af;
+}
+
+.empty-state-cta {
+  font-size: 1rem;
+  color: var(--color-primary);
+  font-style: normal;
+}
+
+body.dark-mode .empty-state-cta {
+  color: var(--color-primary-hover);
+}
+
+/* Form Group */
+.form-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+body.dark-mode .form-group label {
+  color: var(--color-text-dark);
+}
+
+.error-text {
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.total-expenses {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+body.dark-mode .total-expenses {
+  color: var(--color-primary-hover);
 }
 
 /* Responsive Design */
@@ -428,7 +484,7 @@ body.dark-mode .empty-state {
   }
 
   .expense-form textarea {
-    grid-column: span 1;
+    grid-column: span 1; /* Reset for smaller screens */
   }
 }
 
@@ -439,6 +495,7 @@ body.dark-mode .empty-state {
 
   .main-content {
     margin-left: 0;
+    width: 100%; /* Full width on mobile */
     transform: translateX(0);
     transition: transform var(--transition);
   }
@@ -456,6 +513,7 @@ body.dark-mode .empty-state {
   .filter-section {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
   }
 
   .filter-section select,
@@ -488,153 +546,5 @@ body.dark-mode .empty-state {
 
   .expense-list {
     grid-template-columns: 1fr;
-  }
-}
-
-
-/* Existing styles remain unchanged, only adding or updating styles */
-.form-group {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-group label {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-body.dark-mode .form-group label {
-  color: var(--color-text-dark);
-}
-
-.error-text {
-  color: var(--color-danger);
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-.total-expenses {
-  display: inline-block;
-  margin-left: 1rem;
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-body.dark-mode .total-expenses {
-  color: var(--color-primary-hover);
-}
-
-.filter-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: var(--spacing);
-  align-items: center;
-  background: #f9fafb;
-  padding: var(--spacing);
-  border-radius: var(--radius);
-}
-
-body.dark-mode .filter-section {
-  background: #374151;
-}
-
-.filter-section select,
-.filter-section input[type="date"] {
-  flex: 1;
-  min-width: 160px;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  border: 1px solid var(--color-border);
-  font-size: 0.9375rem;
-  background: #ffffff;
-  color: var(--color-text);
-  transition: border-color var(--transition), box-shadow var(--transition);
-}
-
-body.dark-mode .filter-section select,
-body.dark-mode .filter-section input[type="date"] {
-  background: #374151;
-  border-color: var(--color-border-dark);
-  color: var(--color-text-dark);
-}
-
-.filter-section select:focus,
-.filter-section input[type="date"]:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  outline: none;
-}
-
-.filter-section button {
-  flex: 0 0 auto;
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-weight: 500;
-  transition: background var(--transition), transform var(--transition);
-}
-
-.filter-section button:hover {
-  background: var(--color-primary-hover);
-  transform: translateY(-2px);
-}
-
-.clear-btn {
-  background: #6b7280;
-}
-
-.clear-btn:hover {
-  background: #4b5563;
-}
-
-.empty-state {
-  text-align: center;
-  color: #6b7280;
-  font-size: 1.25rem;
-  font-style: italic;
-  padding: 2rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-body.dark-mode .empty-state {
-  color: #9ca3af;
-}
-
-.empty-state-cta {
-  font-size: 1rem;
-  color: var(--color-primary);
-  font-style: normal;
-}
-
-body.dark-mode .empty-state-cta {
-  color: var(--color-primary-hover);
-}
-
-/* Responsive Design for Filter Section */
-@media (max-width: 768px) {
-  .filter-section {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
-  }
-
-  .filter-section select,
-  .filter-section input[type="date"] {
-    min-width: 0;
-    width: 100%;
-  }
-
-  .filter-section button {
-    width: 100%;
   }
 }

@@ -56,6 +56,27 @@ const FilterSection = ({ filter, onFilterChange, onApply, onClear, onSortChange,
   </section>
 );
 
+const convertToCSV = (data) => {
+  const headers = ["Category", "Amount", "Date", "Notes"];
+  const escapeCsvField = (field) => {
+    if (field == null) return "";
+    const str = field.toString();
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+  const rows = data.map((exp) =>
+    [
+      escapeCsvField(exp.category),
+      escapeCsvField(exp.amount),
+      escapeCsvField(new Date(exp.date).toISOString().split("T")[0]),
+      escapeCsvField(exp.notes),
+    ].join(",")
+  );
+  return [...headers, ...rows].join("\n");
+};
+
 const ExpensePage = () => {
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
@@ -113,8 +134,9 @@ const ExpensePage = () => {
   const loadExpenses = async () => {
     setLoading(true);
     try {
-      const data = await getExpenses(filter);
-      const sortedData = sortExpenses(Array.isArray(data) ? data : [], sort);
+      const response = await getExpenses(filter);
+      const data = Array.isArray(response) ? response : response.data || [];
+      const sortedData = sortExpenses(data, sort);
       setExpenses(sortedData);
     } catch (error) {
       setError("Failed to load expenses. Please try again.");
@@ -225,6 +247,7 @@ const ExpensePage = () => {
   const clearFilters = () => {
     setFilter({ category: "", startDate: "", endDate: "" });
     setSort("date-desc");
+    loadExpenses();
   };
 
   const calculateTotal = () => {
@@ -266,10 +289,7 @@ const ExpensePage = () => {
             filter={filter}
             onFilterChange={handleFilterChange}
             onApply={loadExpenses}
-            onClear={() => {
-              clearFilters();
-              loadExpenses();
-            }}
+            onClear={clearFilters}
             onSortChange={handleSortChange}
             sort={sort}
           />
@@ -386,27 +406,6 @@ const ExpensePage = () => {
       </div>
     </div>
   );
-};
-
-const convertToCSV = (data) => {
-  const headers = ["Category", "Amount", "Date", "Notes"];
-  const escapeCsvField = (field) => {
-    if (field == null) return "";
-    const str = field.toString();
-    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
-      return `"${str.replace(/"/g, '""')}"`;
-    }
-    return str;
-  };
-  const rows = data.map((exp) =>
-    [
-      escapeCsvField(exp.category),
-      escapeCsvField(exp.amount),
-      escapeCsvField(new Date(exp.date).toISOString().split("T")[0]),
-      escapeCsvField(exp.notes),
-    ].join(",")
-  );
-  return [...headers, ...rows].join("\n");
 };
 
 export default ExpensePage;

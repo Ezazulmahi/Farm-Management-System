@@ -24,7 +24,9 @@ body {
   font-family: var(--font-family);
   background-color: var(--color-light-bg);
   color: var(--color-light-text);
-  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-y: auto; /* Allow vertical scrolling */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -37,18 +39,20 @@ body.dark-mode {
 .app-container {
   display: flex;
   width: 100%;
-  min-height: 100vh;
-  overflow: hidden;
+  flex: 1; /* Allow container to grow with content */
 }
 
 /* Main Content */
 .main-content {
   flex: 1;
   padding: 2rem;
-  overflow-y: auto;
-  margin-left: 300px;
-  transition: all 0.3s ease;
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 100vh; /* Restrict to viewport height */
+  margin-left: 300px; /* Matches the sidebar width */
   background-color: var(--color-light-bg);
+  width: calc(100% - 300px); /* Take remaining width */
+  z-index: 50; /* Ensure it's not behind the sidebar */
+  box-sizing: border-box; /* Include padding in height calculations */
 }
 
 body.dark-mode .main-content {
@@ -66,6 +70,7 @@ body.dark-mode .main-content {
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  min-height: 100%; /* Allow content to expand */
 }
 
 /* Filters and Search */
@@ -147,7 +152,6 @@ body.dark-mode .filter-group input {
   font-weight: 500;
   color: var(--color-light-text);
 }
-
 
 .form-group input,
 .form-group textarea,
@@ -427,6 +431,14 @@ body.dark-mode .error-message {
 }
 
 /* Responsive Adjustments */
+@media (min-width: 769px) {
+  .main-content {
+    margin-left: 300px;
+    width: calc(100% - 300px);
+    max-height: 100vh; /* Ensure scrolling within viewport */
+  }
+}
+
 @media (max-width: 1024px) {
   .filters {
     flex-direction: column;
@@ -440,12 +452,18 @@ body.dark-mode .error-message {
 
 @media (max-width: 768px) {
   .main-content {
-    margin-left: 0;
-    padding: 1rem;
+    margin-left: 0; /* Remove margin for smaller screens */
+    width: 100%;
+    max-height: none; /* Allow full content height */
+  }
+  
+  .sidebar {
+    width: 280px; /* Adjust sidebar width */
   }
   
   .sidebar.open + .main-content {
     margin-left: 280px;
+    width: calc(100% - 280px);
   }
   
   .task-list {
@@ -488,10 +506,6 @@ body.dark-mode .error-message {
   font-size: 0.9375rem;
   width: 100%;
   transition: all 0.2s ease;
-}
-
-.search-input::placeholder {
-  color: #9ca3af;
 }
 
 .search-input::placeholder {

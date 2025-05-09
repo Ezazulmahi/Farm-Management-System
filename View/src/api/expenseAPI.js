@@ -5,7 +5,7 @@ const BASE_URL = "http://localhost:5000/api/expenses";
 
 export const getExpenses = async (filter = {}) => {
   const res = await axios.get(BASE_URL, { params: filter });
-  return res.data;
+  return Array.isArray(res.data) ? res.data : res.data.data || [];
 };
 
 export const createExpense = async (expense) => {

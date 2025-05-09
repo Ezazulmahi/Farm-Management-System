@@ -1,23 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 .sidebar {
-  width: 300px; /* Increased width */
-  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
-  color: #1f2937;
-  padding: 2rem; /* Adjusted padding */
-  min-height: 100vh;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.3s ease, background 0.3s ease;
-  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
-  font-family: 'Roboto', sans-serif;
-  position: fixed;
+  width: 300px; /* Ensure it matches the margin-left of .main-content */
+  position: fixed; /* Fix it to the left side of the screen */
   top: 0;
   left: 0;
-  height: 100vh;
-  z-index: 100;
+  height: 100vh; /* Full height */
+  z-index: 100; /* Ensure it appears above other elements */
+  overflow-y: auto; /* Allow scrolling if content overflows */
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .sidebar.dark-mode {
@@ -118,7 +109,6 @@ body.dark-mode .search-input {
 }
 
 .sidebar-link-item {
-  margin检验: 0.3s ease;
   margin-bottom: 0.5rem;
 }
 
@@ -239,8 +229,10 @@ body.dark-mode .toggle-dark-mode-btn:hover {
 /* Sidebar Responsive Styles */
 @media (min-width: 769px) {
   .sidebar {
-    position: static;
+    position: fixed;
     transform: translateX(0);
+    width: 300px;
+    z-index: 100;
   }
 
   .toggle-sidebar-btn {
@@ -250,16 +242,11 @@ body.dark-mode .toggle-dark-mode-btn:hover {
 
 @media (max-width: 768px) {
   .sidebar {
-    height: 100%;
-    width: 280px; /* Adjusted width for smaller screens */
+    transform: translateX(-300px); /* Hide sidebar for smaller screens */
   }
 
   .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .sidebar:not(.open) {
-    transform: translateX(-280px);
+    transform: translateX(0); /* Show sidebar when open */
   }
 }
 

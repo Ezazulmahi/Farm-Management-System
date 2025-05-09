@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PropTypes from 'prop-types';
 import DashboardCard from "../components/DashboardCard";
 import DashboardChart from "../components/DashboardChart";
-import Sidebar from '../components/Sidebar';
+import Sidebar from "../components/Sidebar";
 import ClipLoader from "react-spinners/ClipLoader";
 import "../styles/AdminDashboard.css";
-import {
-  Package,
-  AlertTriangle,
-  ClipboardList,
-  Wallet,
-  User,
-} from "lucide-react";
+import { Package, AlertTriangle, ClipboardList, Wallet, User } from "lucide-react";
 
 // Error Boundary
 class ErrorBoundary extends React.Component {
@@ -39,20 +32,22 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   // Fetch dashboard data
   useEffect(() => {
     const fetchStats = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const response = await fetch('/api/dashboard');
-        console.log('Response:', response);
+        const response = await fetch("http://localhost:5000/api/dashboard");
         if (!response.ok) {
           const text = await response.text();
           throw new Error(`HTTP error! Status: ${response.status}, Body: ${text}`);
         }
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
           const text = await response.text();
           throw new Error(`Expected JSON, received: ${text}`);
         }
@@ -76,12 +71,22 @@ const AdminDashboard = () => {
 
   // Handle search
   const handleSearch = (query) => {
-    console.log("Search query:", query);
+    setSearchQuery(query.toLowerCase());
   };
 
   // Handle export
   const handleExport = () => {
-    console.log("Exporting data...");
+    if (!stats) {
+      setError("No data to export.");
+      return;
+    }
+    const csv = convertToCSV(stats);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    link.download = `dashboard_stats_${timestamp}.csv`;
+    link.click();
   };
 
   // Toggle theme
@@ -90,29 +95,58 @@ const AdminDashboard = () => {
   };
 
   // Calculate total expenses
-  const totalExpense = stats?.expenses.reduce((sum, e) => sum + e.total, 0) || 0;
+  const totalExpense = stats?.expenses?.reduce((sum, e) => sum + (e.total || 0), 0) || 0;
+
+  // Filter cards based on search query
+  const filteredCards = [
+    { title: "Total Products", value: stats?.totalProducts || 0, icon: Package },
+    { title: "Low Inventory", value: stats?.lowInventoryCount || 0, icon: AlertTriangle, alertLevel: stats?.lowInventoryCount > 5 ? "high" : stats?.lowInventoryCount > 0 ? "medium" : "" },
+    { title: "Pending Tasks", value: stats?.pendingTasks || 0, icon: ClipboardList },
+    { title: "Monthly Expenses", value: `₹${totalExpense}`, icon: Wallet, alertLevel: totalExpense > 10000 ? "high" : totalExpense > 5000 ? "medium" : "" },
+    { title: "Recent Activities", value: stats?.recentActivities?.length || 0, icon: ClipboardList },
+    { title: "Total Users", value: stats?.totalUsers || 0, icon: User },
+  ].filter((card) => card.title.toLowerCase().includes(searchQuery));
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen flex bg-gradient-to-br from-cyan-100 to-blue-100">
-        <Sidebar handleLogout={handleLogout} />
-        <main className="flex-1 p-6 overflow-y-auto">
+      <div className="min-h-screen">
+        <Sidebar handleLogout={handleLogout} toggleTheme={toggleTheme} />
+        <main>
           <h2 className="text-3xl font-bold mb-6 text-gray-800">Welcome back, Admin!</h2>
 
           {/* Search Bar */}
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search stats..."
             className="search-bar"
             onChange={(e) => handleSearch(e.target.value)}
             aria-label="Search Dashboard"
           />
 
+          {/* Theme Toggle */}
+          <button onClick={toggleTheme} className="btn-secondary mb-4">
+            Toggle Theme
+          </button>
+
           {/* Error Message */}
           {error && (
-            <div className="text-red-500">
+            <div className="error-message">
               <p>{error}</p>
-              <button onClick={() => window.location.reload()} className="btn-retry">
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  setError(null);
+                  fetch("http://localhost:5000/api/dashboard")
+                    .then((response) => {
+                      if (!response.ok) throw new Error("Failed to fetch");
+                      return response.json();
+                    })
+                    .then((data) => setStats(data))
+                    .catch((err) => setError(`Failed to fetch: ${err.message}`))
+                    .finally(() => setLoading(false));
+                }}
+                className="btn-retry"
+              >
                 Retry
               </button>
             </div>
@@ -132,42 +166,25 @@ const AdminDashboard = () => {
             <>
               {/* Dashboard Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <DashboardCard
-                  title="Total Products"
-                  value={stats.totalProducts}
-                  icon={Package}
-                />
-                <DashboardCard
-                  title="Low Inventory"
-                  value={stats.lowInventoryCount}
-                  icon={AlertTriangle}
-                />
-                <DashboardCard
-                  title="Pending Tasks"
-                  value={stats.pendingTasks}
-                  icon={ClipboardList}
-                />
-                <DashboardCard
-                  title="Monthly Expenses"
-                  value={`₹${totalExpense}`}
-                  icon={Wallet}
-                />
-                <DashboardCard
-                  title="Recent Activities"
-                  value={stats.recentActivities.length}
-                  icon={ClipboardList}
-                />
-                <DashboardCard
-                  title="Total Users"
-                  value={stats.totalUsers}
-                  icon={User}
-                />
+                {filteredCards.map((card, index) => (
+                  <DashboardCard
+                    key={index}
+                    title={card.title}
+                    value={card.value}
+                    icon={card.icon}
+                    alertLevel={card.alertLevel}
+                  />
+                ))}
               </div>
 
               {/* Quick Actions */}
-              <div className="quick-actions flex gap-4">
-                <button onClick={() => navigate('/add-product')} className="btn-primary">Add Product</button>
-                <button onClick={() => navigate('/manage-users')} className="btn-secondary">Manage Users</button>
+              <div className="quick-actions flex gap-4 mb-6">
+                <button onClick={() => navigate("/add-product")} className="btn-primary">
+                  Add Product
+                </button>
+                <button onClick={() => navigate("/manage-users")} className="btn-secondary">
+                  Manage Users
+                </button>
                 <button onClick={handleExport} className="btn-export" aria-label="Export Data">
                   Export Data
                 </button>
@@ -177,10 +194,10 @@ const AdminDashboard = () => {
               <div className="notifications">
                 {stats?.notifications?.length > 0 ? (
                   stats.notifications.map((notification, index) => (
-                    <p key={index} className="text-sm text-gray-600">{notification}</p>
+                    <p key={index}>{notification}</p>
                   ))
                 ) : (
-                  <p className="text-gray-500">No notifications available.</p>
+                  <p>No notifications available.</p>
                 )}
               </div>
 
@@ -194,11 +211,18 @@ const AdminDashboard = () => {
   );
 };
 
-// Prop validation for DashboardCard
-DashboardCard.propTypes = {
-  title: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  icon: PropTypes.elementType.isRequired,
+// Convert stats to CSV
+const convertToCSV = (stats) => {
+  const headers = ["Metric", "Value"];
+  const rows = [
+    ["Total Products", stats.totalProducts || 0],
+    ["Low Inventory", stats.lowInventoryCount || 0],
+    ["Pending Tasks", stats.pendingTasks || 0],
+    ["Monthly Expenses", stats.expenses?.reduce((sum, e) => sum + (e.total || 0), 0) || 0],
+    ["Recent Activities", stats.recentActivities?.length || 0],
+    ["Total Users", stats.totalUsers || 0],
+  ].map((row) => row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(","));
+  return [headers.join(","), ...rows].join("\n");
 };
 
 export default AdminDashboard;

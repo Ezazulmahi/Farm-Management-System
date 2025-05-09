@@ -1,6 +1,5 @@
 /* Ensure the page can scroll vertically */
 html, body, #root {
-  height: 100%;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -9,15 +8,15 @@ html, body, #root {
 /* Root Element (Wraps entire App) */
 #root {
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  flex-direction: row; /* Sidebar and main content side by side */
+  min-height: 100vh; /* Allow content to expand */
+  width: 100vw; /* Ensure it takes full viewport width */
 }
 
 /* To ensure any page can grow and be scrollable */
 .page-container {
   flex-grow: 1;
   display: flex;
-  overflow: hidden;
 }
 
 /* Universal box-sizing */
@@ -35,6 +34,6 @@ html, body, #root {
 
 @media (max-width: 768px) {
   .scrollable-container {
-    max-height: 80vh;
+    max-height: none; /* Allow full height on smaller screens */
   }
 }
