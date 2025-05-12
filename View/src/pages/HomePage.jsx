@@ -59,6 +59,9 @@ const HomePage = () => {
         <h2>Farmora</h2>
         <div className="nav-icons">
           <img src="/images/cart.png" alt="Cart" onClick={() => navigate("/cart")} className="nav-icon" />
+          {/* <img src="/images/weather.png" alt="Weather" onClick={() => navigate("/weather")} className="nav-icon" /> */}
+          <img src="/images/weather.png" alt="Weather" onClick={() => navigate("/weather")} className="nav-icon weather-icon pulsing-weather" />
+
           <img src="/images/notification.png" alt="Notification" onClick={() => navigate("/notifications")} className="nav-icon" />
           <img src="/images/profile.png" alt="Profile" onClick={() => navigate("/farm-profile")} className="nav-icon" />
           <img src="/images/logout.png" alt="Logout" onClick={handleLogout} className="nav-icon" />

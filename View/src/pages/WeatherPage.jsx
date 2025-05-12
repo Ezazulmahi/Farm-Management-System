@@ -1,99 +1,97 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import '../styles/WeatherPage.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "../styles/WeatherPage.css";
 
-const WeatherPage = () => {
-  const [city, setCity] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [weather, setWeather] = useState(null);
-  const [error, setError] = useState('');
+const Weather = () => {
+  const [weatherData, setWeatherData] = useState(null);
+  const [city, setCity] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [manualCity, setManualCity] = useState("Dhaka");
 
-  // Handle typing and fetch suggestions
-  const handleSearch = async (e) => {
-    const query = e.target.value;
-    setCity(query);
-    if (query.length > 2) {
-      try {
-        const res = await axios.get(`http://localhost:5000/api/search?q=${query}`);
-        setSuggestions(res.data);
-      } catch {
-        setSuggestions([]);
-      }
+  const API_KEY = "260cf2e543b484fd322f2a8d8d902b32"; // Replace with your actual OpenWeatherMap API key
+
+  useEffect(() => {
+    // Try to detect city from geolocation
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const res = await axios.get(
+              `https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid=260cf2e543b484fd322f2a8d8d902b32`
+            );
+            setWeatherData(res.data);
+            setCity(res.data.name);
+          } catch (error) {
+            console.error("Failed to fetch weather by location:", error);
+            fetchWeatherByCity(manualCity); // fallback
+          } finally {
+            setLoading(false);
+          }
+        },
+        (error) => {
+          console.warn("Geolocation denied, falling back to manual city.");
+          fetchWeatherByCity(manualCity);
+        }
+      );
     } else {
-      setSuggestions([]);
+      fetchWeatherByCity(manualCity);
     }
-  };
+  }, []);
 
-  // Select a suggestion
-  const selectCity = (name) => {
-    setCity(name);
-    setSuggestions([]);
-    getWeather(name);
-  };
-
-  // Fetch weather for selected city
-  const getWeather = async (selectedCity = city) => {
+  const fetchWeatherByCity = async (cityName) => {
+    setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5000/api/weather?city=${selectedCity}`);
-      setWeather(res.data);
-      setError('');
-    } catch (err) {
-      setError('Unable to get weather data');
-      setWeather(null);
+      const res = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}&units=metric`
+      );
+      setWeatherData(res.data);
+      setCity(res.data.name);
+    } catch (error) {
+      console.error("Error fetching weather:", error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleCityChange = (e) => {
+    const selectedCity = e.target.value;
+    setManualCity(selectedCity);
+    fetchWeatherByCity(selectedCity);
   };
 
   return (
-    <div className="App">
-      <h1>🌍 Weather Forecast</h1>
+    <div className="weather-page">
+      <h1>Weather in {city || manualCity}</h1>
+      <select value={manualCity} onChange={handleCityChange}>
+        <option value="Dhaka">Dhaka</option>
+        <option value="Chattogram">Chattogram</option>
+        <option value="Sylhet">Sylhet</option>
+        <option value="Rajshahi">Rajshahi</option>
+        <option value="Khulna">Khulna</option>
+        <option value="Barisal">Barisal</option>
+        <option value="Rangpur">Rangpur</option>
+        <option value="Mymensingh">Mymensingh</option>
+      </select>
 
-      <div className="input-group">
-        <input
-          type="text"
-          placeholder="Enter city"
-          value={city}
-          onChange={handleSearch}
-        />
-        <button onClick={() => getWeather()}>Search</button>
-      </div>
-
-      {/* Suggestions */}
-      {suggestions.length > 0 && (
-        <ul className="suggestions">
-          {suggestions.map((item, idx) => (
-            <li key={idx} onClick={() => selectCity(item.name)}>
-              {item.name}, {item.country}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {/* Error */}
-      {error && <p className="error">{error}</p>}
-
-      {/* Weather Info */}
-      {weather && (
-        <div className="weather-info">
-          <h2>{weather.location.name}, {weather.location.country}</h2>
-          <p>Current: {weather.current.condition.text}</p>
-          <img src={weather.current.condition.icon} alt="weather icon" />
-          <p>Temperature: {weather.current.temp_c}°C</p>
-
-          <h3>3-Day Forecast</h3>
-          <div className="forecast">
-            {weather.forecast.forecastday.map((day, idx) => (
-              <div key={idx} className="forecast-day">
-                <p><strong>{day.date}</strong></p>
-                <img src={day.day.condition.icon} alt="forecast icon" />
-                <p>{day.day.condition.text}</p>
-                <p>{day.day.avgtemp_c}°C</p>
-              </div>
-            ))}
-          </div>
+      {loading ? (
+        <p>Loading weather...</p>
+      ) : weatherData ? (
+        <div className="weather-card">
+          <h2>{weatherData.weather[0].main}</h2>
+          <p>🌡️ Temp: {weatherData.main.temp}°C</p>
+          <p>💧 Humidity: {weatherData.main.humidity}%</p>
+          <p>🌬️ Wind: {weatherData.wind.speed} m/s</p>
+          <img
+            src={`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+            alt="icon"
+          />
         </div>
+      ) : (
+        <p>Weather data not available.</p>
       )}
     </div>
   );
 };
 
-export default WeatherPage;
+export default Weather;
