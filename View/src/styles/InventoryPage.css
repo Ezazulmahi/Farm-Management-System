@@ -61,6 +61,7 @@ body.dark-mode {
 
 body.dark-mode .main-content {
   background-color: #111827;
+  color: #e2e8f0;
 }
 
 /* Content Container */
@@ -69,6 +70,11 @@ body.dark-mode .main-content {
   margin: 0 auto;
   width: 100%;
   min-height: 100%;
+}
+
+body.dark-mode .content-container {
+  background-color: #1f2937;
+  color: #e2e8f0;
 }
 
 /* Padding Utility */
@@ -186,7 +192,7 @@ body.dark-mode .sort-select {
   color: #e2e8f0;
 }
 
-.sort-select:focus {
+sort-select:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
