@@ -9,7 +9,7 @@ const ChatBot = () => {
   const faqAnswers = {
     "hi": "Hello! How can I assist you today?",
     "what is the delivery charge": "Inside Dhaka 100 Taka and outside Dhaka 200 Taka.",
-    "what is the delivery time": "Inside Dhaka 2 to 3 days and outside Dhaka 5 to 7 days.",
+    "how much time it will take": "Inside Dhaka 2 to 3 days and outside Dhaka 5 to 7 days.",
     "what payment methods are available": "Cash on delivery and bKash.",
     "do you deliver on weekends": "Yes, we deliver 7 days a week.",
 
