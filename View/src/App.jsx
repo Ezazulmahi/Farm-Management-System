@@ -20,12 +20,14 @@ import Weather from "./pages/WeatherPage";
 import Bracseed from "./pages/Farms/BracSeed";
 import AdminFarmPanel from "./pages/AdminFarmPanel";
 import LocationTracking from "./pages/LocationTracking";
-import Sadeeq from "./pages/Farms/Sadeeq";
-import Soformali from "./pages/Farms/Soformali";
-import Cattle from "./pages/Farms/Cattle";
-import ReviewForm from "./pages/ReviewForm";
-import PreviousReviews from "./pages/PreviousReviews";
-import ThankYou from "./pages/ThankYou";
+import Sadeeq from './pages/Farms/Sadeeq';
+import Soformali from './pages/Farms/Soformali';
+import Cattle from './pages/Farms/Cattle';
+import ReviewForm from './pages/ReviewForm';
+
+import ChatBot from './pages/ChatBot';
+import PreviousReviews from './pages/PreviousReviews';
+import ThankYou from './pages/ThankYou';
 import ProductPage from "./pages/ProductPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ManageUsers from "./pages/ManageUsers";
@@ -33,40 +35,40 @@ import ManageUsers from "./pages/ManageUsers";
 const App = () => {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <ErrorBoundary>
-        <Routes>
-          <Route path="cattle-ranch" element={<Cattle />} />
-          <Route path="soformali" element={<Soformali />} />
-          <Route path="sadeeq-agro" element={<Sadeeq />} />
-          <Route path="/thank-you" element={<ThankYou />} />
-          <Route path="/" element={<Startpage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/farm-profile" element={<FarmProfile />} />
-          <Route path="/brac-seed" element={<Bracseed />} />
-          <Route path="/panel" element={<AdminFarmPanel />} />
-          <Route path="/post" element={<Post />} />
-          <Route path="/weather" element={<Weather />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/notifications" element={<NotificationsPage />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/inventory" element={<InventoryPage />} />
-          <Route path="/tasks" element={<TaskPage />} />
-          <Route path="/admin/expenses" element={<ExpensePage />} />
-          <Route path="/track" element={<LocationTracking />} />
-          <Route path="/tracking" element={<LocationTracking />} />
-          <Route path="/admin" element={<AdminFarmPanel />} />
-          <Route path="/admin/farm" element={<AdminFarmPanel />} />
-          <Route path="/products" element={<ProductPage />} />
-          <Route path="/review" element={<ReviewForm />} />
-          <Route path="*" element={<div>404 - Page Not Found</div>} />
-          <Route path="/previous-reviews" element={<PreviousReviews />} />
-          <Route path="/manage-users" element={<ManageUsers />} />
-        </Routes>
-      </ErrorBoundary>
+      <Routes>
+        <Route path="cattle-ranch" element={<Cattle />} />
+        <Route path="soformali" element={<Soformali />} />
+        <Route path="sadeeq-agro" element={<Sadeeq />} />
+        <Route path="chatbot" element={<ChatBot />} />
+
+
+        <Route path="/thank-you" element={<ThankYou />} />
+        <Route path="/" element={<Startpage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/farm-profile" element={<FarmProfile />} />
+        <Route path="/brac-seed" element={<Bracseed />} />
+        <Route path="/panel" element={<AdminFarmPanel />} />
+        <Route path="/post" element={<Post />} />
+        <Route path="/weather" element={<Weather />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/inventory" element={<InventoryPage />} />
+        <Route path="/tasks" element={<TaskPage />} />
+        <Route path="/admin/expenses" element={<ExpensePage />} />
+        <Route path="/track" element={<LocationTracking />} />
+        <Route path="/tracking" element={<LocationTracking />} />
+        <Route path="/admin" element={<AdminFarmPanel />} />
+        <Route path="/admin/farm" element={<AdminFarmPanel />} />
+        <Route path="/products" element={<ProductPage />} />
+        <Route path="/review" element={<ReviewForm />} />
+        <Route path="*" element={<div>404 - Page Not Found</div>} />
+        <Route path="/previous-reviews" element={<PreviousReviews />} />
+      </Routes>
     </Router>
   );
 };

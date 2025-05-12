@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ChatBot from "./ChatBot"; // 👉 Import ChatBot
 import "../styles/HomePage.css";
 
 const HomePage = () => {
@@ -12,13 +13,12 @@ const HomePage = () => {
 
   const navigate = useNavigate();
 
-  // Fetch farm data from the backend
   useEffect(() => {
     const fetchFarms = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/farms");
         setFarms(res.data);
-        setFilteredFarms(res.data.slice(0, 4)); // Show first 4 initially
+        setFilteredFarms(res.data.slice(0, 4));
       } catch (err) {
         setError("Failed to fetch farms.");
       } finally {
@@ -28,10 +28,9 @@ const HomePage = () => {
     fetchFarms();
   }, []);
 
-  // Search filter
   const handleSearch = () => {
     if (searchQuery.trim() === "") {
-      setFilteredFarms(farms.slice(0, 4)); // Reset to first 4 if search is empty
+      setFilteredFarms(farms.slice(0, 4));
     } else {
       const results = farms.filter((farm) =>
         farm.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -40,13 +39,11 @@ const HomePage = () => {
     }
   };
 
-  // Logout handler
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
     navigate("/login");
   };
 
-  // Navigate to farm page based on farm name
   const goToFarm = (farmName) => {
     const farmRoute = farmName.toLowerCase().replace(/\s+/g, '-');
     navigate(`/${farmRoute}`);
@@ -59,9 +56,7 @@ const HomePage = () => {
         <h2>Farmora</h2>
         <div className="nav-icons">
           <img src="/images/cart.png" alt="Cart" onClick={() => navigate("/cart")} className="nav-icon" />
-          {/* <img src="/images/weather.png" alt="Weather" onClick={() => navigate("/weather")} className="nav-icon" /> */}
           <img src="/images/weather.png" alt="Weather" onClick={() => navigate("/weather")} className="nav-icon weather-icon pulsing-weather" />
-
           <img src="/images/notification.png" alt="Notification" onClick={() => navigate("/notifications")} className="nav-icon" />
           <img src="/images/profile.png" alt="Profile" onClick={() => navigate("/farm-profile")} className="nav-icon" />
           <img src="/images/logout.png" alt="Logout" onClick={handleLogout} className="nav-icon" />
@@ -93,7 +88,6 @@ const HomePage = () => {
           <div className="farm-items">
             {filteredFarms.map((farm) => (
               <div key={farm._id} className="farm-card" onClick={() => goToFarm(farm.name)}>
-                {/* Displaying the image from the /public/images folder */}
                 <img src={farm.image} alt={farm.name} className="farm-image" />
                 <p>{farm.name}</p>
               </div>
@@ -101,6 +95,9 @@ const HomePage = () => {
           </div>
         )}
       </div>
+
+      {/* ✅ Chatbot floating widget */}
+      <ChatBot />
     </div>
   );
 };
