@@ -5,7 +5,7 @@ import DashboardChart from "../components/DashboardChart";
 import Sidebar from "../components/Sidebar";
 import ClipLoader from "react-spinners/ClipLoader";
 import "../styles/AdminDashboard.css";
-import { Package, AlertTriangle, ClipboardList, Wallet, User } from "lucide-react";
+import { Package, AlertTriangle, ClipboardList, User } from "lucide-react";
 
 // Error Boundary
 class ErrorBoundary extends React.Component {
@@ -43,19 +43,13 @@ const AdminDashboard = () => {
       try {
         const response = await fetch("http://localhost:5000/api/dashboard");
         if (!response.ok) {
-          const text = await response.text();
-          throw new Error(`HTTP error! Status: ${response.status}, Body: ${text}`);
-        }
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await response.text();
-          throw new Error(`Expected JSON, received: ${text}`);
+          throw new Error("Failed to fetch dashboard data");
         }
         const data = await response.json();
         setStats(data);
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
-        setError(`Failed to fetch dashboard data: ${error.message}`);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -77,7 +71,7 @@ const AdminDashboard = () => {
   // Handle export
   const handleExport = () => {
     if (!stats) {
-      setError("No data to export.");
+      setError("No data available to export.");
       return;
     }
     const csv = convertToCSV(stats);
@@ -89,28 +83,46 @@ const AdminDashboard = () => {
     link.click();
   };
 
-  // Toggle theme
-  const toggleTheme = () => {
-    document.body.classList.toggle("dark-theme");
-  };
-
-  // Calculate total expenses
-  const totalExpense = stats?.expenses?.reduce((sum, e) => sum + (e.total || 0), 0) || 0;
-
-  // Filter cards based on search query
+  // Define cards based on real data
   const filteredCards = [
-    { title: "Total Products", value: stats?.totalProducts || 0, icon: Package },
-    { title: "Low Inventory", value: stats?.lowInventoryCount || 0, icon: AlertTriangle, alertLevel: stats?.lowInventoryCount > 5 ? "high" : stats?.lowInventoryCount > 0 ? "medium" : "" },
-    { title: "Pending Tasks", value: stats?.pendingTasks || 0, icon: ClipboardList },
-    { title: "Monthly Expenses", value: `₹${totalExpense}`, icon: Wallet, alertLevel: totalExpense > 10000 ? "high" : totalExpense > 5000 ? "medium" : "" },
-    { title: "Recent Activities", value: stats?.recentActivities?.length || 0, icon: ClipboardList },
-    { title: "Total Users", value: stats?.totalUsers || 0, icon: User },
-  ].filter((card) => card.title.toLowerCase().includes(searchQuery));
+    stats?.totalProducts !== undefined && {
+      title: "Total Products",
+      value: stats.totalProducts,
+      icon: Package,
+    },
+    stats?.lowInventoryCount !== undefined && {
+      title: "Low Inventory",
+      value: stats.lowInventoryCount,
+      icon: AlertTriangle,
+      alertLevel: stats.lowInventoryCount > 5 ? "high" : stats.lowInventoryCount > 0 ? "medium" : "",
+    },
+    stats?.pendingTasks !== undefined && {
+      title: "Pending Tasks",
+      value: stats.pendingTasks,
+      icon: ClipboardList,
+    },
+    stats?.recentActivities?.length > 0 && {
+      title: "Recent Activities",
+      value: stats.recentActivities.length,
+      icon: ClipboardList,
+    },
+    stats?.totalUsers !== undefined && {
+      title: "Total Users",
+      value: stats.totalUsers,
+      icon: User,
+    },
+  ]
+    .filter(Boolean) // Remove undefined entries
+    .filter((card) => card.title.toLowerCase().includes(searchQuery));
+
+  const handleCardClick = (path) => {
+    navigate(path);
+  };
 
   return (
     <ErrorBoundary>
       <div className="min-h-screen">
-        <Sidebar handleLogout={handleLogout} toggleTheme={toggleTheme} />
+        <Sidebar handleLogout={handleLogout} />
         <main>
           <h2 className="text-3xl font-bold mb-6 text-gray-800">Welcome back, Admin!</h2>
 
@@ -122,11 +134,6 @@ const AdminDashboard = () => {
             onChange={(e) => handleSearch(e.target.value)}
             aria-label="Search Dashboard"
           />
-
-          {/* Theme Toggle */}
-          <button onClick={toggleTheme} className="btn-secondary mb-4">
-            Toggle Theme
-          </button>
 
           {/* Error Message */}
           {error && (
@@ -160,28 +167,44 @@ const AdminDashboard = () => {
               <div className="skeleton-card"></div>
               <div className="skeleton-card"></div>
             </div>
-          ) : !stats ? (
+          ) : !stats || filteredCards.length === 0 ? (
             <p className="text-red-500">No dashboard data available. Please try again later.</p>
           ) : (
             <>
               {/* Dashboard Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                {filteredCards.map((card, index) => (
-                  <DashboardCard
-                    key={index}
-                    title={card.title}
-                    value={card.value}
-                    icon={card.icon}
-                    alertLevel={card.alertLevel}
-                  />
-                ))}
+                <DashboardCard
+                  title="Pending Tasks"
+                  value={stats.pendingTasks}
+                  icon={ClipboardList}
+                  alertLevel=""
+                  onClick={() => handleCardClick("/tasks")}
+                />
+                <DashboardCard
+                  title="Low Inventory"
+                  value={stats.lowInventoryCount}
+                  icon={AlertTriangle}
+                  alertLevel={stats.lowInventoryCount > 5 ? "high" : "medium"}
+                  onClick={() => handleCardClick("/inventory")}
+                />
+                <DashboardCard
+                  title="Total Products"
+                  value={stats.totalProducts}
+                  icon={Package}
+                  alertLevel=""
+                  onClick={() => handleCardClick("/products")}
+                />
+                <DashboardCard
+                  title="Total Users"
+                  value={stats.totalUsers}
+                  icon={User}
+                  alertLevel=""
+                  onClick={() => handleCardClick("/manage-users")}
+                />
               </div>
 
               {/* Quick Actions */}
               <div className="quick-actions flex gap-4 mb-6">
-                <button onClick={() => navigate("/add-product")} className="btn-primary">
-                  Add Product
-                </button>
                 <button onClick={() => navigate("/manage-users")} className="btn-secondary">
                   Manage Users
                 </button>
@@ -192,17 +215,10 @@ const AdminDashboard = () => {
 
               {/* Notifications */}
               <div className="notifications">
-                {stats?.notifications?.length > 0 ? (
-                  stats.notifications.map((notification, index) => (
-                    <p key={index}>{notification}</p>
-                  ))
-                ) : (
-                  <p>No notifications available.</p>
-                )}
               </div>
 
               {/* Dashboard Chart */}
-              <DashboardChart data={stats.expenses} />
+              <DashboardChart data={[]} />
             </>
           )}
         </main>
@@ -214,15 +230,13 @@ const AdminDashboard = () => {
 // Convert stats to CSV
 const convertToCSV = (stats) => {
   const headers = ["Metric", "Value"];
-  const rows = [
-    ["Total Products", stats.totalProducts || 0],
-    ["Low Inventory", stats.lowInventoryCount || 0],
-    ["Pending Tasks", stats.pendingTasks || 0],
-    ["Monthly Expenses", stats.expenses?.reduce((sum, e) => sum + (e.total || 0), 0) || 0],
-    ["Recent Activities", stats.recentActivities?.length || 0],
-    ["Total Users", stats.totalUsers || 0],
-  ].map((row) => row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(","));
-  return [headers.join(","), ...rows].join("\n");
+  const rows = [];
+  if (stats.totalProducts !== undefined) rows.push(["Total Products", stats.totalProducts]);
+  if (stats.lowInventoryCount !== undefined) rows.push(["Low Inventory", stats.lowInventoryCount]);
+  if (stats.pendingTasks !== undefined) rows.push(["Pending Tasks", stats.pendingTasks]);
+  if (stats.recentActivities?.length > 0) rows.push(["Recent Activities", stats.recentActivities.length]);
+  if (stats.totalUsers !== undefined) rows.push(["Total Users", stats.totalUsers]);
+  return [headers.join(","), ...rows.map((row) => row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(","))].join("\n");
 };
 
 export default AdminDashboard;

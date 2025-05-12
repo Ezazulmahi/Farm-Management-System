@@ -1,0 +1,23 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+th {
+  background-color: #f4f4f4;
+}
+
+.manage-users-container {
+  display: flex;
+}
+
+.manage-users-content {
+  margin-left: 300px; /* Adjust based on the sidebar width */
+  padding: 20px;
+  width: 100%;
+}

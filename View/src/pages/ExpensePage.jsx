@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  getExpenses,
-  createExpense,
-  deleteExpense,
-  updateExpense,
-} from "../api/expenseAPI";
+import { useNavigate } from "react-router-dom";
+import { getExpenses, createExpense, updateExpense, deleteExpense } from "../api/expenseAPI";
+import { CATEGORY_OPTIONS } from "../constants/categories";
+import Sidebar from "../components/Sidebar";
+import ExpenseCard from "../components/ExpenseCard";
 import "../styles/ExpensePage.css";
 
 const FilterSection = ({ filter, onFilterChange, onApply, onClear, onSortChange, sort }) => (

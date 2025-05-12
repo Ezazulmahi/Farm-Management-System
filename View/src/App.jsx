@@ -1,5 +1,6 @@
-import React from 'react';
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 import Startpage from "./pages/Startpage";
 import LoginPage from "./pages/LoginPage";
@@ -28,7 +29,8 @@ import ChatBot from './pages/ChatBot';
 import PreviousReviews from './pages/PreviousReviews';
 import ThankYou from './pages/ThankYou';
 import ProductPage from "./pages/ProductPage";
-import NotificationsPage from './pages/NotificationsPage';
+import NotificationsPage from "./pages/NotificationsPage";
+import ManageUsers from "./pages/ManageUsers";
 
 const App = () => {
   return (

@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import TaskCard from "../components/TaskCard";
 import TaskForm from "../components/TaskForm";
 import { fetchTasks, createTask, updateTask, deleteTask } from "../api/taskAPI";
+import { Spinner } from "../components/Spinner"; // Create a reusable spinner component
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false, error: null };
@@ -236,13 +237,15 @@ const TaskPage = () => {
 
           <TaskForm onSubmit={handleAddTask} disabled={actionLoading} />
 
-          {loading ? (
-            <p>Loading tasks...</p>
-          ) : error ? (
+          {error && (
             <div className="error-message">
               <p>{error}</p>
-              <button onClick={loadTasks}>Retry</button>
+              <button onClick={() => setError("")}>Dismiss</button>
             </div>
+          )}
+
+          {loading ? (
+            <Spinner />
           ) : paginatedTasks.length === 0 ? (
             <p>No tasks to display. Add one above!</p>
           ) : (
