@@ -24,6 +24,7 @@ import Soformali from './pages/Farms/Soformali';
 import Cattle from './pages/Farms/Cattle';
 import ReviewForm from './pages/ReviewForm';
 
+import ChatBot from './pages/ChatBot';
 import PreviousReviews from './pages/PreviousReviews';
 import ThankYou from './pages/ThankYou';
 import ProductPage from "./pages/ProductPage";
@@ -36,6 +37,8 @@ const App = () => {
         <Route path="cattle-ranch" element={<Cattle />} />
         <Route path="soformali" element={<Soformali />} />
         <Route path="sadeeq-agro" element={<Sadeeq />} />
+        <Route path="chatbot" element={<ChatBot />} />
+
 
         <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/" element={<Startpage />} />
