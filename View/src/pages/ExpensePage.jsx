@@ -27,6 +27,7 @@ const FilterSection = ({ filter, onFilterChange, onApply, onClear, onSortChange,
       value={filter.startDate}
       onChange={onFilterChange}
       aria-label="Filter by start date"
+      placeholder="Start Date"
     />
     <input
       type="date"
@@ -34,6 +35,7 @@ const FilterSection = ({ filter, onFilterChange, onApply, onClear, onSortChange,
       value={filter.endDate}
       onChange={onFilterChange}
       aria-label="Filter by end date"
+      placeholder="End Date"
     />
     <select
       name="sort"
@@ -299,10 +301,11 @@ const ExpensePage = () => {
               Export to CSV
             </button>
             <div className="total-expenses" aria-label="Total expenses">
-              Total: ${calculateTotal()}
+              Total: ৳{calculateTotal()}
             </div>
           </div>
 
+          <h3 className="form-title">Add Expense</h3>
           <form className="expense-form" onSubmit={handleSubmit} noValidate>
             <div className="form-group">
               <label htmlFor="category">Category</label>

@@ -33,7 +33,7 @@ const UserList = ({ onEdit }) => {
             <tr key={user._id}>
               <td>{user.name}</td>
               <td>{user.email}</td>
-              <td>
+              <td className="action-buttons">
                 <button onClick={() => onEdit(user)}>Edit</button>
                 <button onClick={() => handleDelete(user._id)}>Delete</button>
               </td>

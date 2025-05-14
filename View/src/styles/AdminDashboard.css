@@ -171,6 +171,21 @@ body.dark-theme main p {
   color: #9ca3af;
 }
 
+/* Center the welcome section */
+.welcome-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20vh; /* Adjust height as needed */
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Remove margin from the heading */
+.welcome-section h2 {
+  margin: 0;
+}
+
 /* Search Bar */
 .search-bar {
   width: 100%;
@@ -474,4 +489,10 @@ body.dark-theme .error-message {
   .search-bar {
     max-width: 100%;
   }
+}
+
+.quick-actions {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
 }

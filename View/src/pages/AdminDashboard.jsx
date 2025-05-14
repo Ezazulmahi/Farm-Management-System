@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import ClipLoader from "react-spinners/ClipLoader";
 import "../styles/AdminDashboard.css";
 import { Package, AlertTriangle, ClipboardList, User } from "lucide-react";
+import { getExpenses } from "../api/expenseAPI";
 
 // Error Boundary
 class ErrorBoundary extends React.Component {
@@ -30,31 +31,49 @@ class ErrorBoundary extends React.Component {
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
+  const [expenseData, setExpenseData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
-  // Fetch dashboard data
+  // Fetch dashboard and expense data
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch("http://localhost:5000/api/dashboard");
-        if (!response.ok) {
+        // Fetch dashboard stats
+        const statsResponse = await fetch("http://localhost:5000/api/dashboard");
+        if (!statsResponse.ok) {
           throw new Error("Failed to fetch dashboard data");
         }
-        const data = await response.json();
-        setStats(data);
+        const statsData = await statsResponse.json();
+        setStats(statsData);
+
+        // Fetch expenses
+        const expenses = await getExpenses();
+        // Aggregate expenses by category
+        const aggregatedData = expenses.reduce((acc, expense) => {
+          const category = expense.category;
+          const amount = parseFloat(expense.amount || 0);
+          const existing = acc.find((item) => item._id === category);
+          if (existing) {
+            existing.total += amount;
+          } else {
+            acc.push({ _id: category, total: amount });
+          }
+          return acc;
+        }, []);
+        setExpenseData(aggregatedData);
       } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
+        console.error("Failed to fetch data:", error);
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
-    fetchStats();
+    fetchData();
   }, []);
 
   // Handle logout
@@ -112,7 +131,7 @@ const AdminDashboard = () => {
       icon: User,
     },
   ]
-    .filter(Boolean) // Remove undefined entries
+    .filter(Boolean)
     .filter((card) => card.title.toLowerCase().includes(searchQuery));
 
   const handleCardClick = (path) => {
@@ -124,16 +143,9 @@ const AdminDashboard = () => {
       <div className="min-h-screen">
         <Sidebar handleLogout={handleLogout} />
         <main>
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Welcome back, Admin!</h2>
-
-          {/* Search Bar */}
-          <input
-            type="text"
-            placeholder="Search stats..."
-            className="search-bar"
-            onChange={(e) => handleSearch(e.target.value)}
-            aria-label="Search Dashboard"
-          />
+          <div className="welcome-section">
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">Welcome back, Admin!</h2>
+          </div>
 
           {/* Error Message */}
           {error && (
@@ -204,7 +216,7 @@ const AdminDashboard = () => {
               </div>
 
               {/* Quick Actions */}
-              <div className="quick-actions flex gap-4 mb-6">
+              <div className="quick-actions">
                 <button onClick={() => navigate("/manage-users")} className="btn-secondary">
                   Manage Users
                 </button>
@@ -214,11 +226,10 @@ const AdminDashboard = () => {
               </div>
 
               {/* Notifications */}
-              <div className="notifications">
-              </div>
+              <div className="notifications"></div>
 
               {/* Dashboard Chart */}
-              <DashboardChart data={[]} />
+              <DashboardChart data={expenseData} />
             </>
           )}
         </main>

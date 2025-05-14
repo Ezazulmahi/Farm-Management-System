@@ -40,7 +40,7 @@ const App = () => {
         <Route path="soformali" element={<Soformali />} />
         <Route path="sadeeq-agro" element={<Sadeeq />} />
         <Route path="chatbot" element={<ChatBot />} />
-
+        <Route path="manage-users" element={<ManageUsers />} />
 
         <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/" element={<Startpage />} />

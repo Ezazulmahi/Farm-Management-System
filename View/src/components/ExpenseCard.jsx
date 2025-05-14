@@ -5,7 +5,7 @@ const ExpenseCard = ({ expense, onEdit, onDelete }) => {
     <div className="expense-card">
       <div className="expense-info">
         <h4>{expense.category}</h4>
-        <p>₹{expense.amount}</p>
+        <p>৳{expense.amount}</p>
         <p>{expense.notes}</p>
         <p className="date">{new Date(expense.date).toLocaleDateString()}</p>
       </div>

@@ -64,10 +64,10 @@ body.dark-mode {
   min-height: 100vh;
   position: relative;
   z-index: 10;
-  margin-left: var(--sidebar-width); /* Added to prevent Sidebar overlap */
-  width: calc(100% - var(--sidebar-width)); /* Ensure content fits beside Sidebar */
-  overflow-y: auto; /* Enable scrolling for content */
-  max-height: 100vh; /* Limit height to viewport */
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
 body.dark-mode .main-content {
@@ -84,7 +84,7 @@ body.dark-mode .main-content {
   border-radius: var(--radius);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   transition: background var(--transition);
-  min-height: calc(100vh - 3rem); /* Ensure full height minus margins */
+  min-height: calc(100vh - 3rem);
 }
 
 body.dark-mode .expense-page {
@@ -104,6 +104,19 @@ body.dark-mode .expense-page {
 
 body.dark-mode .page-title {
   color: #f3f4f6;
+}
+
+/* Form Title */
+.form-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: left; /* Changed to left */
+  color: #111827; /* Matches page-title */
+}
+
+body.dark-mode .form-title {
+  color: #f3f4f6; /* Matches page-title */
 }
 
 /* Messages */
@@ -139,7 +152,7 @@ body.dark-mode .loading-spinner {
   color: #9ca3af;
 }
 
-/* Filter Section (Consolidated, removed duplicate) */
+/* Filter Section */
 .filter-section {
   display: flex;
   flex-wrap: wrap;
@@ -149,6 +162,7 @@ body.dark-mode .loading-spinner {
   background: #f9fafb;
   padding: var(--spacing);
   border-radius: var(--radius);
+  justify-content: space-between;
 }
 
 body.dark-mode .filter-section {
@@ -158,7 +172,7 @@ body.dark-mode .filter-section {
 .filter-section select,
 .filter-section input[type="date"] {
   flex: 1;
-  min-width: 120px; /* Reduced for better mobile fit */
+  min-width: 120px;
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
@@ -209,10 +223,10 @@ body.dark-mode .filter-section input[type="date"] {
 
 /* Export Button */
 .export-section {
-  display: flex; /* Changed to flex for better alignment */
+  display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 1rem; /* Space between button and total */
+  gap: 1rem;
   margin-bottom: var(--spacing);
 }
 
@@ -220,9 +234,10 @@ body.dark-mode .filter-section input[type="date"] {
   background: var(--color-secondary);
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem; /* Smaller button */
   border-radius: var(--radius);
   font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: background var(--transition), transform var(--transition);
 }
@@ -243,6 +258,9 @@ body.dark-mode .filter-section input[type="date"] {
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
   transition: background var(--transition), border-color var(--transition);
+  margin-right: auto; /* Align to the left */
+  margin-left: unset; /* Ensure no left margin */
+  max-width: 600px; /* Limit width for left alignment */
 }
 
 body.dark-mode .expense-form {
@@ -274,7 +292,7 @@ body.dark-mode .expense-form textarea {
 .expense-form textarea {
   resize: vertical;
   min-height: 100px;
-  grid-column: span 2; /* Ensure textarea spans on larger screens */
+  grid-column: span 2;
 }
 
 .expense-form select:focus,
@@ -311,8 +329,14 @@ body.dark-mode .expense-form textarea {
 /* Expense List */
 .expense-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adjusted for better sizing */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--spacing);
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .expense-card {
@@ -325,7 +349,7 @@ body.dark-mode .expense-form textarea {
   flex-direction: column;
   justify-content: space-between;
   transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
-  min-height: 200px; /* Ensure consistent card height */
+  min-height: 200px;
 }
 
 .expense-card:hover {
@@ -486,7 +510,7 @@ body.dark-mode .total-expenses {
   }
 
   .expense-form textarea {
-    grid-column: span 1; /* Reset for smaller screens */
+    grid-column: span 1;
   }
 }
 
@@ -497,7 +521,7 @@ body.dark-mode .total-expenses {
 
   .main-content {
     margin-left: 0;
-    width: 100%; /* Full width on mobile */
+    width: 100%;
     transform: translateX(0);
     transition: transform var(--transition);
   }
@@ -530,6 +554,13 @@ body.dark-mode .total-expenses {
 
   .expense-form {
     grid-template-columns: 1fr;
+    margin-right: 0; /* Reset left alignment for mobile */
+    margin-left: 0;
+    max-width: 100%; /* Full width on mobile */
+  }
+
+  .form-title {
+    text-align: center; /* Center title on mobile */
   }
 
   .actions {
