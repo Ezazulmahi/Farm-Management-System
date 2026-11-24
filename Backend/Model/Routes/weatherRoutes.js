@@ -4,16 +4,17 @@ import axios from 'axios';
 
 const router = express.Router();
 
-const BASE_URL = 'http://api.weatherapi.com/v1';
-const API_KEY = process.env.WEATHER_API_KEY;
+const BASE_URL = 'https://api.weatherapi.com/v1';
+const apiKey = () => process.env.WEATHER_API_KEY;
 
 // 🌦️ Get current + forecast weather
 router.get('/', async (req, res) => {
+  if (!apiKey()) return res.status(503).json({ error: 'WEATHER_API_KEY is not configured' });
   const city = req.query.city || 'London';
   try {
     const response = await axios.get(`${BASE_URL}/forecast.json`, {
       params: {
-        key: API_KEY,
+        key: apiKey(),
         q: city,
         days: 3,
         aqi: 'no',
@@ -34,7 +35,7 @@ router.get('/search', async (req, res) => {
   try {
     const response = await axios.get(`${BASE_URL}/search.json`, {
       params: {
-        key: API_KEY,
+        key: apiKey(),
         q: query,
       },
     });

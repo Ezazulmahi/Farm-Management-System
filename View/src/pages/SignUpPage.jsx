@@ -55,7 +55,7 @@ const SignUpPage = () => {
         <select name="type" value={userData.type} onChange={handleChange} required>
           <option value="">Select Type</option>
           <option value="customer">Customer</option>
-          <option value="admin">Admin</option>
+          <option value="farmer">Farmer</option>
         </select>
         <button type="submit" disabled={loading}>{loading ? "Signing Up..." : "Sign Up"}</button>
       </form>

@@ -44,3 +44,42 @@ farm-management-system/
 │   └── vite.config.js
 │
 └── README.md
+
+## Running it locally
+
+Requirements: Node.js 20 or newer and a MongoDB database (local `mongod` or a free MongoDB Atlas cluster).
+
+1. Backend
+   ```bash
+   cd Backend
+   npm install
+   cp Model/.env.example Model/.env   # then fill in MONGO_URI and WEATHER_API_KEY
+   npm start                          # http://localhost:5000
+   ```
+2. Frontend
+   ```bash
+   cd View
+   npm install
+   npm run dev                        # http://localhost:5173
+   ```
+3. First admin account. Sign up only offers the customer and farmer roles, so create the admin from the server:
+   ```bash
+   cd Backend
+   # set ADMIN_EMAIL and ADMIN_PASSWORD in Model/.env first
+   npm run create-admin
+   ```
+
+## Tests
+
+```bash
+cd Backend
+npm test
+```
+
+The tests start a throwaway in-memory MongoDB (`mongodb-memory-server`), so they never touch your real database.
+
+## Known gaps
+
+- The API has no session or token check yet. Admin pages are hidden in the frontend only, so anyone who calls the API directly can edit or delete users, farms and products.
+- `View/src/pages/Farms/Cattle.jsx` calls `/api/cattleranch` and `InventoryPage.jsx` calls `/api/products/:id/stock-history`. Neither endpoint exists in the backend.
+- The frontend hardcodes `http://localhost:5000` as the API address in several files.
