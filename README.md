@@ -55,6 +55,8 @@ Requirements: Node.js 20 or newer and a MongoDB database (local `mongod` or a fr
    npm install
    cp Model/.env.example Model/.env   # then fill in MONGO_URI and WEATHER_API_KEY
    npm start                          # http://localhost:5000
+   # or, with no database set up at all:
+   npm run dev:memory                 # throwaway in-memory MongoDB
    ```
 2. Frontend
    ```bash
