@@ -1,94 +1,213 @@
-import React, { useEffect, useState } from "react";
+// eslint-disable-next-line no-unused-vars -- vite.config.js uses the classic JSX runtime, which needs React in scope
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/WeatherPage.css";
 
+const API = "http://localhost:5000/api/weather";
+const CITIES = ["Dhaka", "Chattogram", "Sylhet", "Rajshahi", "Khulna", "Barisal", "Rangpur", "Mymensingh"];
+
+function readUser() {
+  try {
+    return JSON.parse(localStorage.getItem("userInfo")) || null;
+  } catch {
+    return null;
+  }
+}
+
+const formatTime = (value) =>
+  new Date(value).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+
+const errorText = (error, fallback) => error.response?.data?.error || fallback;
+
 const Weather = () => {
-  const [weatherData, setWeatherData] = useState(null);
-  const [city, setCity] = useState("");
+  const user = readUser();
+  const userId = user?.id;
+  const canSave = Boolean(user && ["farmer", "admin"].includes(user.type));
+
+  const [query, setQuery] = useState({ city: "Dhaka" });
+  const [selectedCity, setSelectedCity] = useState("Dhaka");
+  const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [manualCity, setManualCity] = useState("Dhaka");
+  const [error, setError] = useState("");
 
-  const API_KEY = "260cf2e543b484fd322f2a8d8d902b32"; // Replace with your actual OpenWeatherMap API key
+  const [saved, setSaved] = useState([]);
+  const [note, setNote] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    // Try to detect city from geolocation
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
-          try {
-            const res = await axios.get(
-              `https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid=260cf2e543b484fd322f2a8d8d902b32`
-            );
-            setWeatherData(res.data);
-            setCity(res.data.name);
-          } catch (error) {
-            console.error("Failed to fetch weather by location:", error);
-            fetchWeatherByCity(manualCity); // fallback
-          } finally {
-            setLoading(false);
-          }
-        },
-        (error) => {
-          console.warn("Geolocation denied, falling back to manual city.");
-          fetchWeatherByCity(manualCity);
-        }
-      );
-    } else {
-      fetchWeatherByCity(manualCity);
-    }
-  }, []);
-
-  const fetchWeatherByCity = async (cityName) => {
+  const loadWeather = useCallback(async (params) => {
     setLoading(true);
+    setError("");
     try {
-      const res = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}&units=metric`
-      );
-      setWeatherData(res.data);
-      setCity(res.data.name);
-    } catch (error) {
-      console.error("Error fetching weather:", error);
+      const { data } = await axios.get(API, { params });
+      setWeather(data.summary);
+    } catch (err) {
+      setWeather(null);
+      setError(errorText(err, "Weather data not available."));
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  const loadSaved = useCallback(async () => {
+    if (!canSave) return;
+    try {
+      const { data } = await axios.get(`${API}/saved`, { params: { userId } });
+      setSaved(data);
+    } catch (err) {
+      setMessage(errorText(err, "Could not load your saved weather."));
+    }
+  }, [canSave, userId]);
+
+  useEffect(() => {
+    loadWeather(query);
+  }, [query, loadWeather]);
+
+  useEffect(() => {
+    loadSaved();
+  }, [loadSaved]);
 
   const handleCityChange = (e) => {
-    const selectedCity = e.target.value;
-    setManualCity(selectedCity);
-    fetchWeatherByCity(selectedCity);
+    setSelectedCity(e.target.value);
+    setQuery({ city: e.target.value });
+  };
+
+  const useMyLocation = () => {
+    if (!("geolocation" in navigator)) {
+      setMessage("This browser can't share your location.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setSelectedCity("");
+        setQuery({ lat: coords.latitude.toFixed(4), lon: coords.longitude.toFixed(4) });
+      },
+      () => setMessage("Location permission was denied. Pick a city instead.")
+    );
+  };
+
+  const saveWeather = async () => {
+    setSaving(true);
+    setMessage("");
+    try {
+      const { data } = await axios.post(`${API}/saved`, { userId, note, ...query });
+      setSaved((prev) => [data, ...prev]);
+      setNote("");
+      setMessage(`Saved ${data.city} at ${formatTime(data.createdAt)}.`);
+    } catch (err) {
+      setMessage(errorText(err, "Could not save the weather."));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteSaved = async (id) => {
+    try {
+      await axios.delete(`${API}/saved/${id}`, { params: { userId } });
+      setSaved((prev) => prev.filter((log) => log._id !== id));
+    } catch (err) {
+      setMessage(errorText(err, "Could not delete that entry."));
+    }
   };
 
   return (
     <div className="weather-page">
-      <h1>Weather in {city || manualCity}</h1>
-      <select value={manualCity} onChange={handleCityChange}>
-        <option value="Dhaka">Dhaka</option>
-        <option value="Chattogram">Chattogram</option>
-        <option value="Sylhet">Sylhet</option>
-        <option value="Rajshahi">Rajshahi</option>
-        <option value="Khulna">Khulna</option>
-        <option value="Barisal">Barisal</option>
-        <option value="Rangpur">Rangpur</option>
-        <option value="Mymensingh">Mymensingh</option>
-      </select>
+      <h1>Weather in {weather?.city || selectedCity || "your area"}</h1>
+
+      <div className="weather-controls">
+        <label htmlFor="weather-city" className="visually-hidden">City</label>
+        <select id="weather-city" value={selectedCity} onChange={handleCityChange}>
+          {!selectedCity && <option value="">My location</option>}
+          {CITIES.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+        <button type="button" className="weather-btn secondary" onClick={useMyLocation}>
+          Use my location
+        </button>
+      </div>
 
       {loading ? (
         <p>Loading weather...</p>
-      ) : weatherData ? (
+      ) : weather ? (
         <div className="weather-card">
-          <h2>{weatherData.weather[0].main}</h2>
-          <p>🌡️ Temp: {weatherData.main.temp}°C</p>
-          <p>💧 Humidity: {weatherData.main.humidity}%</p>
-          <p>🌬️ Wind: {weatherData.wind.speed} m/s</p>
-          <img
-            src={`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
-            alt="icon"
-          />
+          {weather.icon && <img src={weather.icon} alt="" width="64" height="64" />}
+          <h2>{weather.condition}</h2>
+          {weather.region && <p className="weather-region">{weather.region}</p>}
+          <p>🌡️ Temp: {weather.tempC}°C (feels like {weather.feelsLikeC}°C)</p>
+          <p>💧 Humidity: {weather.humidity}%</p>
+          <p>🌬️ Wind: {weather.windKph} km/h</p>
+          <p>🌧️ Chance of rain today: {weather.chanceOfRain ?? 0}%</p>
+
+          {canSave ? (
+            <div className="weather-save">
+              <label htmlFor="weather-note" className="visually-hidden">Note</label>
+              <input
+                id="weather-note"
+                type="text"
+                maxLength={300}
+                placeholder="Note (optional), e.g. sprayed pesticide"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+              <button type="button" className="weather-btn" onClick={saveWeather} disabled={saving}>
+                {saving ? "Saving..." : "Save this weather"}
+              </button>
+            </div>
+          ) : (
+            <p className="weather-hint">Log in with a farmer account to save weather readings.</p>
+          )}
         </div>
       ) : (
-        <p>Weather data not available.</p>
+        <p>{error || "Weather data not available."}</p>
+      )}
+
+      {message && <p className="weather-message" role="status">{message}</p>}
+
+      {canSave && (
+        <section className="weather-saved">
+          <h2>My saved weather</h2>
+          {saved.length === 0 ? (
+            <p className="weather-hint">Nothing saved yet. Press &ldquo;Save this weather&rdquo; to keep a reading.</p>
+          ) : (
+            <div className="weather-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Saved</th>
+                    <th>Place</th>
+                    <th>Condition</th>
+                    <th>Temp</th>
+                    <th>Humidity</th>
+                    <th>Wind</th>
+                    <th>Rain chance</th>
+                    <th>Note</th>
+                    <th aria-label="Actions"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {saved.map((log) => (
+                    <tr key={log._id}>
+                      <td>{formatTime(log.createdAt)}</td>
+                      <td>{log.city}</td>
+                      <td>{log.condition}</td>
+                      <td>{log.tempC}°C</td>
+                      <td>{log.humidity}%</td>
+                      <td>{log.windKph} km/h</td>
+                      <td>{log.chanceOfRain ?? 0}%</td>
+                      <td>{log.note}</td>
+                      <td>
+                        <button type="button" className="weather-btn danger" onClick={() => deleteSaved(log._id)}>
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
       )}
     </div>
   );

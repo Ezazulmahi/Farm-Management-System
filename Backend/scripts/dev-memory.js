@@ -1,6 +1,13 @@
+import dotenv from "dotenv";
 import mongoose from "mongoose";
+import path from "path";
+import { fileURLToPath } from "url";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { createApp } from "../Model/app.js";
+
+// Reads WEATHER_API_KEY and CLIENT_ORIGIN from Model/.env if it exists; MONGO_URI is ignored here.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.join(__dirname, "..", "Model", ".env"), quiet: true });
 
 const PORT = process.env.PORT || 5000;
 

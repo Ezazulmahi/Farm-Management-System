@@ -23,3 +23,120 @@
   width: 300px;
   box-shadow: 0 0 10px #00ccff;
 }
+
+.weather-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.weather-region {
+  margin-top: -6px;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.weather-btn {
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: none;
+  background: #2e8b57;
+  color: #fff;
+  cursor: pointer;
+}
+
+.weather-btn:hover:not(:disabled) {
+  background: #276f47;
+}
+
+.weather-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.weather-btn.secondary {
+  background: #fff;
+  color: #1b4332;
+}
+
+.weather-btn.danger {
+  background: #b23b3b;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+}
+
+.weather-btn:focus-visible,
+.weather-page select:focus-visible,
+.weather-save input:focus-visible {
+  outline: 2px solid #00ccff;
+  outline-offset: 2px;
+}
+
+.weather-save {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.weather-save input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.weather-hint {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.weather-message {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.weather-saved {
+  margin: 30px auto 0;
+  max-width: 960px;
+  padding: 20px;
+  border-radius: 15px;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.weather-table-wrap {
+  overflow-x: auto;
+}
+
+.weather-saved table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.weather-saved th,
+.weather-saved td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  white-space: nowrap;
+}
+
+.weather-saved td:nth-child(8) {
+  white-space: normal;
+  min-width: 140px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
